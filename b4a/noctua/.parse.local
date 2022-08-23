@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "_default": {
+      "link": "noctua"
+    },
+    "noctua": {
+      "applicationId": "SLWtrlBJSzdUpAvA2Jh1aXkr87k65vuB3Mjvkjco"
+    }
+  }
+}
