@@ -3,6 +3,7 @@ import 'package:noctua/app/view/controllers/auth/email/auth_register_email_depen
 import 'package:noctua/app/view/controllers/auth/login/login_dependencies.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_dependencies.dart';
 import 'package:noctua/app/view/controllers/home/home_dependencies.dart';
+import 'package:noctua/app/view/controllers/person/person_dependencies.dart';
 import 'package:noctua/app/view/controllers/user/profile/user_profile_dependencies.dart';
 import 'package:noctua/app/view/pages/auth/login/auth_login_page.dart';
 import 'package:noctua/app/view/pages/auth/register/email/auth_register_email.page.dart';
@@ -40,6 +41,7 @@ class Routes {
       binding: HomeDependencies(),
       bindings: [
         HomeDependencies(),
+        PersonDependencies(),
       ],
       page: () => HomePage(),
     ),

@@ -11,7 +11,9 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
       PersonFilter personFilter) async {
     QueryBuilder<ParseObject> query =
         QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
-    final user = await ParseUser.currentUser() as ParseUser;
+    // final user = await ParseUser.currentUser() as ParseUser;
+    // query.whereEqualTo('isMale', true);
+    // query.
 
     query.includeObject(['user', 'user.profile']);
     return query;

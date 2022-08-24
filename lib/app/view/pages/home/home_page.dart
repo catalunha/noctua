@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_controller.dart';
 import 'package:noctua/app/view/controllers/home/home_controller.dart';
 import 'package:noctua/app/view/pages/home/parts/popmenu_user.dart';
+import 'package:noctua/app/view/pages/person/person_search.dart';
 
 class HomePage extends StatefulWidget {
   final SplashController _splashController = Get.find();
@@ -28,14 +29,7 @@ class _HomePageState extends State<HomePage> {
           PopMenuButtonPhotoUser(),
         ],
       ),
-      body: buildSearch(),
-    );
-  }
-
-  Widget buildSearch() {
-    return const Center(
-      child: Text('Vá e Vença',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50)),
+      body: PersonSearch(),
     );
   }
 }
