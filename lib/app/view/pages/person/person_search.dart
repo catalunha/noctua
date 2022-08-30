@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:noctua/app/view/controllers/person/person_controller.dart';
-import 'package:noctua/app/view/pages/person/parts/person_card.dart';
+import 'package:noctua/app/view/pages/person/parts/person_list.dart';
 import 'package:noctua/app/view/pages/utils/app_textformfield.dart';
 
 class PersonSearch extends StatefulWidget {
@@ -27,9 +27,9 @@ class _PersonSearchState extends State<PersonSearch> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(
-          height: 10,
-        ),
+        // const SizedBox(
+        //   height: 10,
+        // ),
         Row(
           children: [
             Expanded(
@@ -40,22 +40,17 @@ class _PersonSearchState extends State<PersonSearch> {
               ),
             ),
             Expanded(
-                // flex: 1,
-                child: IconButton(
-                    onPressed: () {
-                      widget._personController.listAll();
-                    },
-                    icon: const Icon(Icons.search)))
+              flex: 1,
+              child: IconButton(
+                onPressed: () {
+                  widget._personController.listAll();
+                },
+                icon: const Icon(Icons.search),
+              ),
+            )
           ],
         ),
-        // ElevatedButton(onPressed: () {}, child: const Text('Search by group')),
-        SingleChildScrollView(
-          child: Obx(() => Column(children: [
-                ...widget._personController.personList
-                    .map((e) => PersonCard(personModel: e))
-                    .toList()
-              ])),
-        )
+        Expanded(child: SingleChildScrollView(child: PersonList())),
       ],
     );
   }

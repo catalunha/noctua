@@ -14,7 +14,7 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
     // final user = await ParseUser.currentUser() as ParseUser;
     // query.whereEqualTo('isMale', true);
     // query.
-
+    query.whereEqualTo('isDeleted', false);
     query.includeObject(['user', 'user.profile']);
     return query;
   }
@@ -57,7 +57,7 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
     if (response.success && response.results != null) {
       for (var element in response.results!) {
         print((element as ParseObject).objectId);
-        listTemp.add(PersonEntity().fromParse(element));
+        listTemp.add(await PersonEntity().fromParse(element));
       }
       return listTemp;
     } else {
@@ -79,11 +79,11 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
     }
   }
 
-  @override
-  Future<void> delete(String id) async {
-    var parseObject = ParseObject(PersonEntity.className)..objectId = id;
-    await parseObject.delete();
-  }
+  // @override
+  // Future<void> delete(String id) async {
+  //   var parseObject = ParseObject(PersonEntity.className)..objectId = id;
+  //   await parseObject.delete();
+  // }
 
   // @override
   // Future<void> isArchive(String id, bool mode) async {
@@ -104,7 +104,7 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
     if (response.success && response.results != null) {
       for (var element in response.results!) {
         // print((element as ParseObject).objectId);
-        temp = PersonEntity().fromParse(element);
+        temp = await PersonEntity().fromParse(element);
       }
       // return listTemp;
     } else {

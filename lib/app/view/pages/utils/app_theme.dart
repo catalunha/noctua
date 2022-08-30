@@ -1,5 +1,6 @@
+import 'package:flutter/material.dart';
 
-// class AppTheme {
+class AppTheme {
 //   AppTheme._();
 //   static final ThemeData theme = ThemeData(
 //     primaryColor: const Color(0xFF007D21),
@@ -26,5 +27,6 @@
 //     ),
 //   );
 
-//   static const TextStyle textBold = TextStyle(fontWeight: FontWeight.bold);
-// }
+  static const TextStyle textRed18Bold =
+      TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.bold);
+}

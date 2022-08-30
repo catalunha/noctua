@@ -9,6 +9,8 @@ import 'package:noctua/app/view/pages/auth/login/auth_login_page.dart';
 import 'package:noctua/app/view/pages/auth/register/email/auth_register_email.page.dart';
 import 'package:noctua/app/view/pages/auth/splash/splash_page.dart';
 import 'package:noctua/app/view/pages/home/home_page.dart';
+import 'package:noctua/app/view/pages/person/person_addedit_page.dart';
+import 'package:noctua/app/view/pages/person/person_data.dart';
 import 'package:noctua/app/view/pages/user/profile/user_profile_page.dart';
 
 class Routes {
@@ -19,6 +21,9 @@ class Routes {
 
   static const home = '/home';
   static const userProfile = '/user/profile';
+
+  static const personAddEdit = '/person/addedit';
+  static const personData = '/person/data';
 
   static final pageList = [
     GetPage(
@@ -49,6 +54,14 @@ class Routes {
       name: Routes.userProfile,
       binding: UserProfileDependencies(),
       page: () => UserProfilePage(),
+    ),
+    GetPage(
+      name: Routes.personAddEdit,
+      page: () => PhraseAddEditPage(),
+    ),
+    GetPage(
+      name: Routes.personData,
+      page: () => PersonData(),
     ),
   ];
 }

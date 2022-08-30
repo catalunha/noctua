@@ -6,6 +6,7 @@ class AppTextFormField extends StatelessWidget {
   final bool obscureText;
   final FormFieldValidator<String>? validator;
   final ValueChanged<String>? onChange;
+  final int maxLines;
   const AppTextFormField({
     Key? key,
     required this.label,
@@ -13,6 +14,7 @@ class AppTextFormField extends StatelessWidget {
     this.obscureText = false,
     this.validator,
     this.onChange,
+    this.maxLines = 1,
   }) : super(key: key);
 
   @override
@@ -24,6 +26,9 @@ class AppTextFormField extends StatelessWidget {
         obscureText: obscureText,
         validator: validator,
         onChanged: onChange,
+        // keyboardType: TextInputType.multiline,
+        minLines: 1, //Normal textInputField will be displayed
+        maxLines: maxLines, // when user presses enter it will adapt to it
         // cursorColor: context.theme.primaryColor,
         decoration: InputDecoration(
           isDense: true,

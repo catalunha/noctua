@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_controller.dart';
-import 'package:noctua/app/view/controllers/home/home_controller.dart';
+import 'package:noctua/app/view/controllers/person/person_controller.dart';
 import 'package:noctua/app/view/pages/home/parts/popmenu_user.dart';
 import 'package:noctua/app/view/pages/person/person_search.dart';
 
 class HomePage extends StatefulWidget {
   final SplashController _splashController = Get.find();
-  final HomeController _homeController = Get.find();
+  final PersonController _personController = Get.find();
 
   HomePage({Key? key}) : super(key: key);
 
@@ -29,7 +29,14 @@ class _HomePageState extends State<HomePage> {
           PopMenuButtonPhotoUser(),
         ],
       ),
-      body: PersonSearch(),
+      body: Column(
+        children: [
+          IconButton(
+              onPressed: () => widget._personController.add(),
+              icon: const Icon(Icons.person_add)),
+          Expanded(child: PersonSearch()),
+        ],
+      ),
     );
   }
 }

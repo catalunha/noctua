@@ -10,7 +10,7 @@ class PersonUseCaseImpl implements PersonUseCase {
   }) : _repository = repository;
 
   @override
-  Future<void> delete(String id) async => await _repository.delete(id);
+  // Future<void> delete(String id) async => await _repository.delete(id);
 
   @override
   Future<List<PersonModel>> list(PersonFilter personFilter) async =>

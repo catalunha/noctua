@@ -5,6 +5,6 @@ abstract class PersonRepository {
   Future<List<PersonModel>> list(PersonFilter personFilter);
   Future<String> add(PersonModel model);
   Future<String> update(PersonModel model);
-  Future<void> delete(String id);
+  // Future<void> delete(String id);
   Future<PersonModel?> read(String id);
 }
