@@ -63,6 +63,7 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
                 AppTextFormField(
                   label: 'Apelidos. Separe por virgula. Ex.: a, b',
                   controller: _aliasTEC,
+                  validator: Validatorless.required('Este campo é requerido.'),
                 ),
                 AppTextFormField(
                   label: 'Nome completo',
@@ -89,7 +90,9 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
                 ),
                 Row(
                   children: [
-                    Expanded(child: PersonPhoto()),
+                    Expanded(
+                        child: PersonPhoto(
+                            photo: widget._personController.person?.photo)),
                     Expanded(
                       child: CheckboxListTile(
                         title: const Text("É homem ?"),

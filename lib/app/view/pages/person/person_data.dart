@@ -67,7 +67,8 @@ class PersonData extends StatelessWidget {
                 _personController.person?.history ?? "...",
                 style: AppTheme.textRed18Bold,
               ),
-              const Text('Leis:'),
+              Text(
+                  'Leis (${_personController.person?.laws?.length.toString() ?? ""}):'),
               Text(
                 _personController.person?.laws
                         ?.map((e) => e.note)
@@ -76,7 +77,8 @@ class PersonData extends StatelessWidget {
                     "...",
                 style: AppTheme.textRed18Bold,
               ),
-              const Text('Imagens:'),
+              Text(
+                  'Imagens (${_personController.person?.images?.length.toString() ?? ""}):'),
               if (_personController.person!.images != null &&
                   _personController.person!.images!.isNotEmpty)
                 ..._personController.person!.images!

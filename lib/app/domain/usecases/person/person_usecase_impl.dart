@@ -20,13 +20,16 @@ class PersonUseCaseImpl implements PersonUseCase {
   // Future<void> isArchive(String id, bool mode) async =>
   //     await _repository.isArchive(id, mode);
 
-  @override
-  Future<PersonModel?> read(String id) async => await _repository.read(id);
+  // @override
+  // Future<PersonModel?> read(String id) async => await _repository.read(id);
 
   @override
-  Future<String> add(PersonModel model) async => await _repository.add(model);
-
+  Future<String> addEdit(PersonModel model) async =>
+      await _repository.addEdit(model);
   @override
-  Future<String> update(PersonModel model) async =>
-      await _repository.update(model);
+  Future<bool> updateRelation(PersonModel model) async =>
+      await _repository.updateRelation(model);
+  // @override
+  // Future<String> update(PersonModel model) async =>
+  //     await _repository.update(model);
 }

@@ -1,14 +1,19 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+
 import 'package:noctua/app/view/controllers/person/person_controller.dart';
 
 class PersonPhoto extends StatefulWidget {
   final PersonController _personController = Get.find();
-
-  PersonPhoto({Key? key}) : super(key: key);
+  final String? photo;
+  PersonPhoto({
+    Key? key,
+    this.photo,
+  }) : super(key: key);
 
   @override
   State<PersonPhoto> createState() => _PersonPhotoState();
@@ -47,7 +52,7 @@ class _PersonPhotoState extends State<PersonPhoto> {
                       },
                     ),
             )
-          : widget._personController.person?.photo == null
+          : widget.photo == null
               ? Container(
                   width: 100,
                   height: 100,
@@ -57,7 +62,7 @@ class _PersonPhotoState extends State<PersonPhoto> {
                   ),
                   child: const Center(
                     child: Text(
-                      'Click aqui para buscar uma imagem',
+                      'Click aqui para buscar nova imagem',
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -65,7 +70,7 @@ class _PersonPhotoState extends State<PersonPhoto> {
               : ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: Image.network(
-                    widget._personController.person!.photo!,
+                    widget.photo!,
                     // loadingBuilder: (_, __, ___) {
                     //   return const Center(
                     //       child: CircularProgressIndicator());
@@ -81,6 +86,9 @@ class _PersonPhotoState extends State<PersonPhoto> {
                 ),
       onTap: () async {
         //print'aqui...');
+        setState(() {
+          _xfile = null;
+        });
         final XFile? pickedFile =
             await _picker.pickImage(source: ImageSource.gallery);
 

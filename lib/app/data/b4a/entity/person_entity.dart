@@ -79,25 +79,145 @@ class PersonEntity {
     parseObject.set('isPublic', model.isPublic);
     parseObject.set('cpf', model.cpf);
     parseObject.set('birthday', model.birthday);
-    if (model.laws == null) {
-      parseObject.unset('laws');
-    } else {
-      parseObject.addRelation(
-          'laws',
-          model.laws!
-              .map((law) => ParseObject(LawEntity.className)..objectId = law.id)
-              .toList());
+    // if (model.laws == null) {
+    //   parseObject.unset('laws');
+    // } else {
+    //   parseObject.addRelation(
+    //       'laws',
+    //       model.laws!
+    //           .map((law) => ParseObject(LawEntity.className)..objectId = law.id)
+    //           .toList());
+    // }
+    // if (model.images == null) {
+    //   parseObject.unset('images');
+    // } else {
+    //   List<String> addImage = [];
+    //   List<String> removeImage = [];
+
+    //   for (var image in model.images!) {
+    //     if (image.isDeleted) {
+    //       removeImage.add(image.id!);
+    //     } else {
+    //       addImage.add(image.id!);
+    //     }
+    //   }
+    //   parseObject.removeRelation(
+    //       'images',
+    //       removeImage
+    //           .map((imageId) =>
+    //               ParseObject(PersonImageEntity.className)..objectId = imageId)
+    //           .toList());
+    //   // parseObject.addRelation(
+    //   //     'images',
+    //   //     addImage
+    //   //         .map((imageId) =>
+    //   //             ParseObject(PersonImageEntity.className)..objectId = imageId)
+    //   //         .toList());
+    // }
+    return parseObject;
+  }
+
+  ParseObject? toParseAddRelation(PersonModel model) {
+    final parseObject = ParseObject(PersonEntity.className);
+    if (model.id != null) {
+      parseObject.objectId = model.id;
     }
+    // if (model.laws == null) {
+    //   parseObject.unset('laws');
+    // } else {
+    //         List<String> addLaws = [];
+
+    //   for (var law in model.laws!) {
+    //     if (law.isDeleted) {
+    //       addImage.add(image.id!);
+    //     }
+    //   }
+    //   parseObject.addRelation(
+    //       'laws',
+    //       model.laws!
+    //           .map((law) => ParseObject(LawEntity.className)..objectId = law.id)
+    //           .toList());
+    // }
+    List<String> addImage = [];
     if (model.images == null) {
       parseObject.unset('images');
     } else {
-      parseObject.addRelation(
+      for (var image in model.images!) {
+        if (image.isDeleted == false) {
+          addImage.add(image.id!);
+        }
+      }
+      if (addImage.isNotEmpty) {
+        parseObject.addRelation(
           'images',
-          model.images!
-              .map((images) => ParseObject(PersonImageEntity.className)
-                ..objectId = images.id)
-              .toList());
+          addImage
+              .map((imageId) =>
+                  ParseObject(PersonImageEntity.className)..objectId = imageId)
+              .toList(),
+        );
+      }
+      // parseObject.addRelation(
+      //     'images',
+      //     addImage
+      //         .map((imageId) =>
+      //             ParseObject(PersonImageEntity.className)..objectId = imageId)
+      //         .toList());
     }
-    return parseObject;
+    if (addImage.isEmpty) {
+      return null;
+    } else {
+      return parseObject;
+    }
+  }
+
+  ParseObject? toParseRemoveRelation(PersonModel model) {
+    final parseObject = ParseObject(PersonEntity.className);
+    if (model.id != null) {
+      parseObject.objectId = model.id;
+    }
+    //   List<String> laws = [];
+    // if (model.laws == null) {
+    //   parseObject.unset('laws');
+    // } else {
+    //         for (var law in model.laws!) {
+    //     if (law.isDeleted==true) {
+    //       removeImage.add(image.id!);
+    //     } else {
+    //       addImage.add(image.id!);
+    //     }
+    //   }
+    //   parseObject.addRelation(
+    //       'laws',
+    //       model.laws!
+    //           .map((law) => ParseObject(LawEntity.className)..objectId = law.id)
+    //           .toList());
+    // }
+    List<String> removeImage = [];
+    if (model.images == null) {
+      parseObject.unset('images');
+    } else {
+      for (var image in model.images!) {
+        if (image.isDeleted == true) {
+          removeImage.add(image.id!);
+        }
+      }
+      parseObject.removeRelation(
+          'images',
+          removeImage
+              .map((imageId) =>
+                  ParseObject(PersonImageEntity.className)..objectId = imageId)
+              .toList());
+      // parseObject.addRelation(
+      //     'images',
+      //     addImage
+      //         .map((imageId) =>
+      //             ParseObject(PersonImageEntity.className)..objectId = imageId)
+      //         .toList());
+    }
+    if (removeImage.isEmpty) {
+      return null;
+    } else {
+      return parseObject;
+    }
   }
 }

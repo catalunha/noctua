@@ -1,11 +1,15 @@
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:noctua/app/data/b4a/entity/person_entity.dart';
+import 'package:noctua/app/data/b4a/entity/person_image_entity.dart';
 import 'package:noctua/app/data/b4a/person/person_repository_exception.dart';
+import 'package:noctua/app/data/b4a/person_image/person_image_repository_exception.dart';
+import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/domain/models/user_model.dart';
 import 'package:noctua/app/domain/usecases/person/person_filter.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
+import 'package:noctua/app/domain/usecases/person_image/person_image_usecase.dart';
 import 'package:noctua/app/domain/utils/xfile_to_parsefile.dart';
 import 'package:noctua/app/routes.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_controller.dart';
@@ -14,10 +18,13 @@ import 'package:noctua/app/view/controllers/utils/message_mixin.dart';
 
 class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final PersonUseCase _personUseCase;
+  final PersonImageUseCase _personImageUseCase;
 
   PersonController({
     required PersonUseCase personUseCase,
-  }) : _personUseCase = personUseCase;
+    required PersonImageUseCase personImageUseCase,
+  })  : _personUseCase = personUseCase,
+        _personImageUseCase = personImageUseCase;
 
   final _loading = false.obs;
   set loading(bool value) => _loading(value);
@@ -25,6 +32,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
 
   final _personList = <PersonModel>[].obs;
   List<PersonModel> get personList => _personList;
+
+  // var imageList = <PersonImageModel>[].obs;
 
   final _person = Rxn<PersonModel>();
   PersonModel? get person => _person.value;
@@ -72,6 +81,13 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     Get.toNamed(Routes.personAddEdit);
   }
 
+  void addEditImage(String id) {
+    var phraseTemp = _personList.firstWhere((element) => element.id == id);
+    _person(phraseTemp);
+    // imageList(phraseTemp.images);
+    Get.toNamed(Routes.personAddEditImage);
+  }
+
   void edit(String id) {
     var phraseTemp = _personList.firstWhere((element) => element.id == id);
     _person(phraseTemp);
@@ -112,21 +128,22 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       List<String> aliasTemp = alias.split(',').map((e) => e.trim()).toList();
       aliasTemp.removeWhere((e) => e.isEmpty);
       PersonModel model = PersonModel(
-        id: modelId,
-        user: userModel,
-        isMale: isMale,
-        name: name,
-        cpf: cpf,
-        birthday: selectedDate,
-        alias: aliasTemp,
-        mother: mother,
-        history: history,
-        note: note,
-        isArchived: isArchived,
-        isPublic: isPublic,
-        isDeleted: isDeleted,
-      );
-      String personId = await _personUseCase.add(model);
+          id: modelId,
+          user: userModel,
+          isMale: isMale,
+          name: name,
+          cpf: cpf,
+          birthday: selectedDate,
+          alias: aliasTemp,
+          mother: mother,
+          history: history,
+          note: note,
+          isArchived: isArchived,
+          isPublic: isPublic,
+          isDeleted: isDeleted,
+          images: [],
+          laws: []);
+      String personId = await _personUseCase.addEdit(model);
       if (_xfile != null) {
         await XFileToParseFile.xFileToParseFile(
           xfile: _xfile!,
@@ -135,9 +152,6 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
           objectAttribute: 'photo',
         );
       }
-      // }
-      SplashController splashController = Get.find();
-      await splashController.updateUserProfile();
     } on PersonRepositoryException {
       _message.value = MessageModel(
         title: 'Erro em Repository',
@@ -147,6 +161,88 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     } finally {
       listAll();
       _loading(false);
+      Get.back();
+    }
+  }
+
+  Future<void> onAddEditImage({
+    String note = '',
+  }) async {
+    try {
+      _loading(true);
+      if (_xfile != null) {
+        PersonImageModel personImageModel = PersonImageModel(
+          note: note,
+          isDeleted: false,
+        );
+        String personImageId = await _personImageUseCase.add(personImageModel);
+        String? url = await XFileToParseFile.xFileToParseFile(
+          xfile: _xfile!,
+          className: PersonImageEntity.className,
+          objectId: personImageId,
+          objectAttribute: 'photo',
+        );
+        personImageModel =
+            personImageModel.copyWith(id: personImageId, photo: url);
+        List<PersonImageModel> images = person!.images!;
+        images.add(personImageModel);
+        // _person.value!.images!.add(personImageModel);
+        PersonModel personModel = _person.value!.copyWith(images: images);
+        _person.refresh();
+        await _personUseCase.updateRelation(personModel);
+        xfile = null;
+      }
+    } on PersonImageRepositoryException {
+      _message.value = MessageModel(
+        title: 'Erro em Repository',
+        message: 'Nao foi possivel salvar os dados',
+        isError: true,
+      );
+    } finally {
+      await listAll();
+      _loading(false);
+      // Get.back();
+    }
+  }
+
+  onDeleteImage(String objectImageId) async {
+    try {
+      _loading(true);
+
+      print('Delete: $objectImageId');
+      // // print(_person.value!.images!.length);
+      // PersonImageModel model =
+      //     _person.value!.images!.firstWhere((e) => e.id == objectImageId);
+      // _person.value!.images!.removeWhere((e) => e.id == objectImageId);
+      // PersonImageModel modelTemp = model.copyWith(isDeleted: true);
+      // _person.value!.images!.add(modelTemp);
+      List<PersonImageModel> images = [...person!.images!];
+      PersonImageModel model = images.firstWhere((e) => e.id == objectImageId);
+      print('atualizando: ${model.id}');
+      PersonImageModel modelTemp = model.copyWith(isDeleted: true);
+      images.removeWhere((e) => e.id == objectImageId);
+      images.add(modelTemp);
+      PersonModel personModel = _person.value!.copyWith(images: images);
+      _person.update((val) {
+        // val.images!.add(modelTemp);
+        val!.images!.removeWhere((e) => e.id == objectImageId);
+      });
+
+      _person.refresh();
+
+      // print(person!.images!.length);
+      // print(_person.value!.images!.length);
+      await _personUseCase.updateRelation(personModel);
+    } catch (e) {
+      _message.value = MessageModel(
+        title: 'Erro',
+        message: 'Não foi possivel apagar esta imagem',
+        isError: true,
+      );
+    } finally {
+      await listAll();
+      _loading(false);
+      // Get.back();
     }
   }
 }

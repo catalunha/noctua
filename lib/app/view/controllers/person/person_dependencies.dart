@@ -1,8 +1,12 @@
 import 'package:get/get.dart';
 import 'package:noctua/app/data/b4a/person/person_repository_b4a.dart';
+import 'package:noctua/app/data/b4a/person_image/person_image_repository_b4a.dart';
+import 'package:noctua/app/data/repositories/person_image_repository.dart';
 import 'package:noctua/app/data/repositories/person_repository.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase_impl.dart';
+import 'package:noctua/app/domain/usecases/person_image/person_image_usecase.dart';
+import 'package:noctua/app/domain/usecases/person_image/person_image_usecase_impl.dart';
 import 'package:noctua/app/view/controllers/person/person_controller.dart';
 
 class PersonDependencies implements Bindings {
@@ -16,8 +20,17 @@ class PersonDependencies implements Bindings {
         repository: Get.find(),
       ),
     );
+    Get.put<PersonImageRepository>(
+      PersonImageRepositoryB4a(),
+    );
+    Get.put<PersonImageUseCase>(
+      PersonImageUseCaseImpl(
+        repository: Get.find(),
+      ),
+    );
     Get.put<PersonController>(
-      PersonController(personUseCase: Get.find()),
+      PersonController(
+          personUseCase: Get.find(), personImageUseCase: Get.find()),
     );
   }
 }

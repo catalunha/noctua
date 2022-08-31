@@ -67,9 +67,10 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   }
 
   @override
-  Future<String> append(PersonModel model) async {
+  Future<String> addEdit(PersonModel model) async {
     final parseObject = await PersonEntity().toParse(model);
     final ParseResponse parseResponse = await parseObject.save();
+
     if (parseResponse.success && parseResponse.results != null) {
       ParseObject userProfile = parseResponse.results!.first as ParseObject;
       return userProfile.objectId!;
@@ -77,6 +78,20 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
       throw PersonRepositoryException(
           code: 1, message: 'Não foi possivel cadastrar/atualizar o bem.');
     }
+  }
+
+  @override
+  Future<bool> updateRelation(PersonModel model) async {
+    print('updateRelation images: ${model.images}');
+    final parseObject = PersonEntity().toParseAddRelation(model);
+    if (parseObject != null) {
+      await parseObject.save();
+    }
+    final parseObject2 = PersonEntity().toParseRemoveRelation(model);
+    if (parseObject2 != null) {
+      await parseObject2.save();
+    }
+    return true;
   }
 
   // @override
@@ -92,27 +107,27 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   //   await parseObject.save();
   // }
 
-  @override
-  Future<PersonModel?> read(String id) async {
-    QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
-    query.whereEqualTo('objectId', id);
-    query.includeObject(['user', 'user.profile']);
-    query.first();
-    final ParseResponse response = await query.query();
-    PersonModel? temp;
-    if (response.success && response.results != null) {
-      for (var element in response.results!) {
-        // print((element as ParseObject).objectId);
-        temp = await PersonEntity().fromParse(element);
-      }
-      // return listTemp;
-    } else {
-      print('nao encontrei esta Person...');
-      // return [];
-    }
-    return temp;
-  }
+  // @override
+  // Future<PersonModel?> read(String id) async {
+  //   QueryBuilder<ParseObject> query =
+  //       QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+  //   query.whereEqualTo('objectId', id);
+  //   query.includeObject(['user', 'user.profile']);
+  //   query.first();
+  //   final ParseResponse response = await query.query();
+  //   PersonModel? temp;
+  //   if (response.success && response.results != null) {
+  //     for (var element in response.results!) {
+  //       // print((element as ParseObject).objectId);
+  //       temp = await PersonEntity().fromParse(element);
+  //     }
+  //     // return listTemp;
+  //   } else {
+  //     print('nao encontrei esta Person...');
+  //     // return [];
+  //   }
+  //   return temp;
+  // }
 
   // @override
   // Future<List<PersonModel>> listThisPerson(String personId) async {
@@ -133,13 +148,13 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   //   }
   // }
 
-  @override
-  Future<String> add(PersonModel model) async {
-    return await append(model);
-  }
+  // @override
+  // Future<String> add(PersonModel model) async {
+  //   return await append(model);
+  // }
 
-  @override
-  Future<String> update(PersonModel model) async {
-    return await append(model);
-  }
+  // @override
+  // Future<String> update(PersonModel model) async {
+  //   return await append(model);
+  // }
 }
