@@ -10,6 +10,7 @@ import 'package:noctua/app/view/pages/auth/register/email/auth_register_email.pa
 import 'package:noctua/app/view/pages/auth/splash/splash_page.dart';
 import 'package:noctua/app/view/pages/home/home_page.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_image.dart';
+import 'package:noctua/app/view/pages/person/person_addedit_law.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_page.dart';
 import 'package:noctua/app/view/pages/person/person_data.dart';
 import 'package:noctua/app/view/pages/user/profile/user_profile_page.dart';
@@ -25,6 +26,7 @@ class Routes {
 
   static const personAddEdit = '/person/addedit';
   static const personAddEditImage = '/person/addedit/image';
+  static const personAddEditLaw = '/person/addedit/law';
   static const personData = '/person/data';
 
   static final pageList = [
@@ -68,6 +70,10 @@ class Routes {
     GetPage(
       name: Routes.personAddEditImage,
       page: () => PersonAddEditImage(),
+    ),
+    GetPage(
+      name: Routes.personAddEditLaw,
+      page: () => PersonAddEditLaw(),
     ),
   ];
 }

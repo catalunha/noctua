@@ -41,6 +41,10 @@ class PersonCard extends StatelessWidget {
                     _personController.addEditImage(personModel.id!),
                 icon: const Icon(Icons.photo_library_rounded),
               ),
+              IconButton(
+                onPressed: () => _personController.addEditLaw(personModel.id!),
+                icon: const Icon(Icons.crop_sharp),
+              ),
             ],
           )
         ],

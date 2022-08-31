@@ -17,14 +17,13 @@ class _PersonAddEditImageState extends State<PersonAddEditImage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Adicionar imagem para')),
+      appBar: AppBar(title: const Text('Gerenciar imagens para')),
       body: SingleChildScrollView(
         child: Center(
           child: Obx(
             () => Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('${MediaQuery.of(context).size.width}'),
                 const Text('Pessoa com apelido:'),
                 Text(
                   widget._personController.person?.alias?.join(", ") ?? "...",
@@ -57,11 +56,8 @@ class _PersonAddEditImageState extends State<PersonAddEditImage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.network(
-          width: MediaQuery.of(context).size.width * .8,
-          // fit: BoxFit.fitWidth,
-          // width: MediaQuery.of(context).size.width,
-          // height: MediaQuery.of(context).size.height,
-          // width: 300,
+          // width: MediaQuery.of(context).size.width * .8,
+
           photo,
         ),
         IconButton(

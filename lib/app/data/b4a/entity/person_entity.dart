@@ -9,7 +9,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 class PersonEntity {
   static const String className = 'Person';
   Future<PersonModel> fromParse(ParseObject parseObject) async {
-    print('PersonEntity: ${parseObject.objectId}');
+    //print('PersonEntity: ${parseObject.objectId}');
     //+++ get laws
     final List<LawModel> laws = [];
     QueryBuilder<ParseObject> queryLaws =
@@ -122,22 +122,7 @@ class PersonEntity {
     if (model.id != null) {
       parseObject.objectId = model.id;
     }
-    // if (model.laws == null) {
-    //   parseObject.unset('laws');
-    // } else {
-    //         List<String> addLaws = [];
 
-    //   for (var law in model.laws!) {
-    //     if (law.isDeleted) {
-    //       addImage.add(image.id!);
-    //     }
-    //   }
-    //   parseObject.addRelation(
-    //       'laws',
-    //       model.laws!
-    //           .map((law) => ParseObject(LawEntity.className)..objectId = law.id)
-    //           .toList());
-    // }
     List<String> addImage = [];
     if (model.images == null) {
       parseObject.unset('images');
@@ -156,14 +141,30 @@ class PersonEntity {
               .toList(),
         );
       }
-      // parseObject.addRelation(
-      //     'images',
-      //     addImage
-      //         .map((imageId) =>
-      //             ParseObject(PersonImageEntity.className)..objectId = imageId)
-      //         .toList());
     }
-    if (addImage.isEmpty) {
+
+    List<String> addLaw = [];
+    if (model.laws == null) {
+      parseObject.unset('laws');
+    } else {
+      for (var law in model.laws!) {
+        if (law.isDeleted == false) {
+          addLaw.add(law.id!);
+        }
+      }
+
+      if (addLaw.isNotEmpty) {
+        parseObject.addRelation(
+          'laws',
+          addLaw
+              .map(
+                  (lawId) => ParseObject(LawEntity.className)..objectId = lawId)
+              .toList(),
+        );
+      }
+    }
+
+    if (addImage.isEmpty && addLaw.isEmpty) {
       return null;
     } else {
       return parseObject;
@@ -175,23 +176,7 @@ class PersonEntity {
     if (model.id != null) {
       parseObject.objectId = model.id;
     }
-    //   List<String> laws = [];
-    // if (model.laws == null) {
-    //   parseObject.unset('laws');
-    // } else {
-    //         for (var law in model.laws!) {
-    //     if (law.isDeleted==true) {
-    //       removeImage.add(image.id!);
-    //     } else {
-    //       addImage.add(image.id!);
-    //     }
-    //   }
-    //   parseObject.addRelation(
-    //       'laws',
-    //       model.laws!
-    //           .map((law) => ParseObject(LawEntity.className)..objectId = law.id)
-    //           .toList());
-    // }
+
     List<String> removeImage = [];
     if (model.images == null) {
       parseObject.unset('images');
@@ -201,20 +186,38 @@ class PersonEntity {
           removeImage.add(image.id!);
         }
       }
-      parseObject.removeRelation(
-          'images',
-          removeImage
-              .map((imageId) =>
-                  ParseObject(PersonImageEntity.className)..objectId = imageId)
-              .toList());
-      // parseObject.addRelation(
-      //     'images',
-      //     addImage
-      //         .map((imageId) =>
-      //             ParseObject(PersonImageEntity.className)..objectId = imageId)
-      //         .toList());
+      if (removeImage.isNotEmpty) {
+        parseObject.removeRelation(
+            'images',
+            removeImage
+                .map((imageId) => ParseObject(PersonImageEntity.className)
+                  ..objectId = imageId)
+                .toList());
+      }
     }
-    if (removeImage.isEmpty) {
+
+    List<String> removeLaw = [];
+    if (model.laws == null) {
+      parseObject.unset('laws');
+    } else {
+      for (var law in model.laws!) {
+        if (law.isDeleted == true) {
+          removeLaw.add(law.id!);
+        }
+      }
+      if (removeLaw.isNotEmpty) {
+        parseObject.removeRelation(
+            'laws',
+            removeLaw
+                .map((lawId) =>
+                    ParseObject(LawEntity.className)..objectId = lawId)
+                .toList());
+      }
+    }
+    //print('toParseRemoveRelation laws $removeLaw');
+    //print(parseObject.toJson());
+    //print('=-=-');
+    if (removeImage.isEmpty && removeLaw.isEmpty) {
       return null;
     } else {
       return parseObject;

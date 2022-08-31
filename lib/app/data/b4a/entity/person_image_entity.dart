@@ -4,7 +4,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 class PersonImageEntity {
   static const String className = 'PersonImage';
   PersonImageModel fromParse(ParseObject parseObject) {
-    print('PersonImageEntity: ${parseObject.objectId}');
+    //print('PersonImageEntity: ${parseObject.objectId}');
 
     PersonImageModel model = PersonImageModel(
       id: parseObject.objectId!,

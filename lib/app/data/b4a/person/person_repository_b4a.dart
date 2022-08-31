@@ -56,12 +56,12 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
     List<PersonModel> listTemp = <PersonModel>[];
     if (response.success && response.results != null) {
       for (var element in response.results!) {
-        print((element as ParseObject).objectId);
+        //print((element as ParseObject).objectId);
         listTemp.add(await PersonEntity().fromParse(element));
       }
       return listTemp;
     } else {
-      print('Sem Persons...');
+      //print('Sem Persons...');
       return [];
     }
   }
@@ -82,7 +82,8 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
 
   @override
   Future<bool> updateRelation(PersonModel model) async {
-    print('updateRelation images: ${model.images}');
+    //print('updateRelation images: ${model.images}');
+    //print('updateRelation laws: ${model.laws}');
     final parseObject = PersonEntity().toParseAddRelation(model);
     if (parseObject != null) {
       await parseObject.save();
@@ -118,12 +119,12 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   //   PersonModel? temp;
   //   if (response.success && response.results != null) {
   //     for (var element in response.results!) {
-  //       // print((element as ParseObject).objectId);
+  //       // //print((element as ParseObject).objectId);
   //       temp = await PersonEntity().fromParse(element);
   //     }
   //     // return listTemp;
   //   } else {
-  //     print('nao encontrei esta Person...');
+  //     //print('nao encontrei esta Person...');
   //     // return [];
   //   }
   //   return temp;
@@ -138,12 +139,12 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   //   List<PersonModel> listTemp = <PersonModel>[];
   //   if (response.success && response.results != null) {
   //     for (var element in response.results!) {
-  //       print((element as ParseObject).objectId);
+  //       //print((element as ParseObject).objectId);
   //       listTemp.add(PersonEntity().fromParse(element));
   //     }
   //     return listTemp;
   //   } else {
-  //     print('Sem Persons this person $personId...');
+  //     //print('Sem Persons this person $personId...');
   //     return [];
   //   }
   // }

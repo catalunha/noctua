@@ -23,7 +23,7 @@ class HomeController extends GetxController with LoaderMixin, MessageMixin {
   }
 
   Future<void> logout() async {
-    print('em home logout ');
+    //print('em home logout ');
     await _authUseCase.logout();
     Get.offAllNamed(Routes.authLogin);
   }

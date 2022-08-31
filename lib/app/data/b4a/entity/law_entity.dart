@@ -4,7 +4,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 class LawEntity {
   static const String className = 'Law';
   LawModel fromParse(ParseObject parseObject) {
-    print('LawEntity: ${parseObject.objectId}');
+    //print('LawEntity: ${parseObject.objectId}');
 
     LawModel model = LawModel(
       id: parseObject.objectId!,

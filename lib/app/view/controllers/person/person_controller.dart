@@ -4,9 +4,11 @@ import 'package:noctua/app/data/b4a/entity/person_entity.dart';
 import 'package:noctua/app/data/b4a/entity/person_image_entity.dart';
 import 'package:noctua/app/data/b4a/person/person_repository_exception.dart';
 import 'package:noctua/app/data/b4a/person_image/person_image_repository_exception.dart';
+import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/domain/models/user_model.dart';
+import 'package:noctua/app/domain/usecases/law/law_usecase.dart';
 import 'package:noctua/app/domain/usecases/person/person_filter.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
 import 'package:noctua/app/domain/usecases/person_image/person_image_usecase.dart';
@@ -19,12 +21,15 @@ import 'package:noctua/app/view/controllers/utils/message_mixin.dart';
 class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final PersonUseCase _personUseCase;
   final PersonImageUseCase _personImageUseCase;
+  final LawUseCase _lawUseCase;
 
   PersonController({
     required PersonUseCase personUseCase,
     required PersonImageUseCase personImageUseCase,
+    required LawUseCase lawUseCase,
   })  : _personUseCase = personUseCase,
-        _personImageUseCase = personImageUseCase;
+        _personImageUseCase = personImageUseCase,
+        _lawUseCase = lawUseCase;
 
   final _loading = false.obs;
   set loading(bool value) => _loading(value);
@@ -33,7 +38,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final _personList = <PersonModel>[].obs;
   List<PersonModel> get personList => _personList;
 
-  // var imageList = <PersonImageModel>[].obs;
+  var lawList = <LawModel>[].obs;
+  var lawIdSelectedList = <String>[].obs;
 
   final _person = Rxn<PersonModel>();
   PersonModel? get person => _person.value;
@@ -62,7 +68,6 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     PersonFilter personFilter = PersonFilter();
     List<PersonModel> temp = await _personUseCase.list(personFilter);
     _personList(temp);
-    print(_personList.length);
     _loading(false);
   }
 
@@ -84,8 +89,65 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   void addEditImage(String id) {
     var phraseTemp = _personList.firstWhere((element) => element.id == id);
     _person(phraseTemp);
-    // imageList(phraseTemp.images);
     Get.toNamed(Routes.personAddEditImage);
+  }
+
+  void addEditLaw(String id) async {
+    var phraseTemp = _personList.firstWhere((element) => element.id == id);
+    _person(phraseTemp);
+    List<LawModel> temp = await _lawUseCase.list();
+    lawList(temp);
+    lawIdSelectedList.clear();
+    for (var element in person!.laws!) {
+      lawIdSelectedList.add(element.id!);
+    }
+    Get.toNamed(Routes.personAddEditLaw);
+  }
+
+  void onAddEditlaw() async {
+    try {
+      _loading(true);
+      List<LawModel> lawsOld = [...person!.laws!];
+      List<LawModel> lawsNew = [];
+      List<String> lawIdSelectedListUpdated = [...lawIdSelectedList];
+      // laws.removeWhere((element) => !lawIdSelectedList.contains(element.id));
+      for (var law in lawsOld) {
+        if (lawIdSelectedList.contains(law.id)) {
+          lawsNew.add(law);
+          lawIdSelectedListUpdated.remove(law.id);
+        } else {
+          lawsNew.add(law.copyWith(isDeleted: true));
+        }
+      }
+      for (var lawUpdated in lawIdSelectedListUpdated) {
+        lawsNew.add(lawList
+            .firstWhere((e) => e.id == lawUpdated)
+            .copyWith(isDeleted: false));
+      }
+      PersonModel personModel = _person.value!.copyWith(laws: lawsNew);
+      //print(personModel.laws);
+      await _personUseCase.updateRelation(personModel);
+    } catch (e) {
+      //print('====================');
+      //print(e);
+      _message.value = MessageModel(
+        title: 'Erro',
+        message: 'Não foi possivel atualizar leis',
+        isError: true,
+      );
+    } finally {
+      await listAll();
+      _loading(false);
+      Get.back();
+    }
+  }
+
+  onUpdateLawIdSelectedList(String lawId) {
+    if (lawIdSelectedList.contains(lawId)) {
+      lawIdSelectedList.remove(lawId);
+    } else {
+      lawIdSelectedList.add(lawId);
+    }
   }
 
   void edit(String id) {
@@ -113,7 +175,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     bool isPublic = false,
     bool isDeleted = false,
   }) async {
-    // debug//print'addedit $phrase');
+    // debug////print'addedit $phrase');
     try {
       _loading(true);
       UserModel userModel;
@@ -190,7 +252,6 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         PersonModel personModel = _person.value!.copyWith(images: images);
         _person.refresh();
         await _personUseCase.updateRelation(personModel);
-        xfile = null;
       }
     } on PersonImageRepositoryException {
       _message.value = MessageModel(
@@ -209,8 +270,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     try {
       _loading(true);
 
-      print('Delete: $objectImageId');
-      // // print(_person.value!.images!.length);
+      //print('Delete: $objectImageId');
+      // // //print(_person.value!.images!.length);
       // PersonImageModel model =
       //     _person.value!.images!.firstWhere((e) => e.id == objectImageId);
       // _person.value!.images!.removeWhere((e) => e.id == objectImageId);
@@ -218,7 +279,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       // _person.value!.images!.add(modelTemp);
       List<PersonImageModel> images = [...person!.images!];
       PersonImageModel model = images.firstWhere((e) => e.id == objectImageId);
-      print('atualizando: ${model.id}');
+      //print('atualizando: ${model.id}');
       PersonImageModel modelTemp = model.copyWith(isDeleted: true);
       images.removeWhere((e) => e.id == objectImageId);
       images.add(modelTemp);
@@ -230,8 +291,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
 
       _person.refresh();
 
-      // print(person!.images!.length);
-      // print(_person.value!.images!.length);
+      // //print(person!.images!.length);
+      // //print(_person.value!.images!.length);
       await _personUseCase.updateRelation(personModel);
     } catch (e) {
       _message.value = MessageModel(

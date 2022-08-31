@@ -39,7 +39,7 @@
 //                       _xfile!.path,
 //                       errorBuilder: (BuildContext context, Object exception,
 //                           StackTrace? stackTrace) {
-//                         //print'error 1');
+//                         ////print'error 1');
 //                         return errorBuilderWidget();
 //                       },
 //                     )
@@ -47,7 +47,7 @@
 //                       File(_xfile!.path),
 //                       errorBuilder: (BuildContext context, Object exception,
 //                           StackTrace? stackTrace) {
-//                         //print'error 2');
+//                         ////print'error 2');
 //                         return errorBuilderWidget();
 //                       },
 //                     ),
@@ -79,13 +79,13 @@
 //                     width: 100,
 //                     errorBuilder: (BuildContext context, Object exception,
 //                         StackTrace? stackTrace) {
-//                       //print'error 3');
+//                       ////print'error 3');
 //                       return errorBuilderWidget();
 //                     },
 //                   ),
 //                 ),
 //       onTap: () async {
-//         //print'aqui...');
+//         ////print'aqui...');
 //         final XFile? pickedFile =
 //             await _picker.pickImage(source: ImageSource.gallery);
 
