@@ -234,4 +234,109 @@ class PersonEntity {
       return parseObject;
     }
   }
+
+  ParseObject? toParseUpdateRelationLaws(
+      {required String personId,
+      required List<LawModel> modelList,
+      bool add = false}) {
+    final parseObject = ParseObject(PersonEntity.className);
+    parseObject.objectId = personId;
+    List<String> itemList = [];
+    if (add) {
+      if (modelList.isEmpty) {
+        parseObject.unset('laws');
+      } else {
+        for (var element in modelList) {
+          if (element.isDeleted == false) {
+            itemList.add(element.id!);
+          }
+        }
+        if (itemList.isNotEmpty) {
+          parseObject.addRelation(
+            'laws',
+            itemList
+                .map((element) =>
+                    ParseObject(LawEntity.className)..objectId = element)
+                .toList(),
+          );
+        }
+      }
+    } else {
+      if (modelList.isEmpty) {
+        parseObject.unset('laws');
+      } else {
+        for (var image in modelList) {
+          if (image.isDeleted == true) {
+            itemList.add(image.id!);
+          }
+        }
+        if (itemList.isNotEmpty) {
+          parseObject.removeRelation(
+              'laws',
+              itemList
+                  .map((element) =>
+                      ParseObject(LawEntity.className)..objectId = element)
+                  .toList());
+        }
+      }
+    }
+    if (modelList.isNotEmpty && itemList.isEmpty) {
+      return null;
+    } else {
+      return parseObject;
+    }
+  }
+
+  ParseObject? toParseUpdateRelationImages(
+      {required String personId,
+      required List<PersonImageModel> modelList,
+      bool add = false}) {
+    final parseObject = ParseObject(PersonEntity.className);
+    parseObject.objectId = personId;
+    List<String> itemList = [];
+    if (add) {
+      if (modelList.isEmpty) {
+        parseObject.unset('images');
+      } else {
+        for (var element in modelList) {
+          if (element.isDeleted == false) {
+            itemList.add(element.id!);
+          }
+        }
+        if (itemList.isNotEmpty) {
+          parseObject.addRelation(
+            'images',
+            itemList
+                .map((element) => ParseObject(PersonImageEntity.className)
+                  ..objectId = element)
+                .toList(),
+          );
+        }
+      }
+    } else {
+      if (modelList.isEmpty) {
+        parseObject.unset('images');
+      } else {
+        for (var image in modelList) {
+          if (image.isDeleted == true) {
+            itemList.add(image.id!);
+          }
+        }
+        if (itemList.isNotEmpty) {
+          parseObject.removeRelation(
+              'images',
+              itemList
+                  .map((element) => ParseObject(PersonImageEntity.className)
+                    ..objectId = element)
+                  .toList());
+        }
+      }
+    }
+
+    if (modelList.isNotEmpty && itemList.isEmpty) {
+      return null;
+    } else {
+      return parseObject;
+    }
+  }
 }

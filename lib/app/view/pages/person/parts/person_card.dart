@@ -38,11 +38,12 @@ class PersonCard extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () =>
-                    _personController.addEditImage(personModel.id!),
+                    _personController.addDeleteImage(personModel.id!),
                 icon: const Icon(Icons.photo_library_rounded),
               ),
               IconButton(
-                onPressed: () => _personController.addEditLaw(personModel.id!),
+                onPressed: () =>
+                    _personController.addDeleteLaw(personModel.id!),
                 icon: const Icon(Icons.crop_sharp),
               ),
             ],

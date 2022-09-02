@@ -1,7 +1,11 @@
 import 'package:get/get.dart';
+import 'package:noctua/app/data/b4a/entity/law_entity.dart';
 import 'package:noctua/app/data/b4a/entity/person_entity.dart';
+import 'package:noctua/app/data/b4a/entity/person_image_entity.dart';
 import 'package:noctua/app/data/b4a/person/person_repository_exception.dart';
 import 'package:noctua/app/data/repositories/person_repository.dart';
+import 'package:noctua/app/domain/models/person_image_model.dart';
+import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/domain/usecases/person/person_filter.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -80,19 +84,95 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
     }
   }
 
+  // @override
+  // Future<bool> updateRelation(PersonModel model) async {
+  //   //print('updateRelation images: ${model.images}');
+  //   //print('updateRelation laws: ${model.laws}');
+  //   final parseObject = PersonEntity().toParseAddRelation(model);
+  //   if (parseObject != null) {
+  //     await parseObject.save();
+  //   }
+  //   final parseObject2 = PersonEntity().toParseRemoveRelation(model);
+  //   if (parseObject2 != null) {
+  //     await parseObject2.save();
+  //   }
+  //   return true;
+  // }
+
   @override
-  Future<bool> updateRelation(PersonModel model) async {
-    //print('updateRelation images: ${model.images}');
-    //print('updateRelation laws: ${model.laws}');
-    final parseObject = PersonEntity().toParseAddRelation(model);
+  Future<List<PersonImageModel>> readRelationImages(String personId) async {
+    //+++ get images
+    List<PersonImageModel> images = [];
+    QueryBuilder<ParseObject> queryImages =
+        QueryBuilder<ParseObject>(ParseObject(PersonImageEntity.className));
+    queryImages.whereRelatedTo('images', 'Person', personId);
+    final ParseResponse responseImages = await queryImages.query();
+    if (responseImages.success && responseImages.results != null) {
+      images = [
+        ...responseImages.results!
+            .map<PersonImageModel>(
+                (e) => PersonImageEntity().fromParse(e as ParseObject))
+            .toList()
+      ]; // images.addAll(responseImages.results!
+      //     .map<PersonImageModel>(
+      //         (e) => PersonImageEntity().fromParse(e as ParseObject))
+      //     .toList());
+    }
+    //--- get images
+    return images;
+  }
+
+  @override
+  Future<List<LawModel>> readRelationLaws(String personId) async {
+    //+++ get laws
+    List<LawModel> laws = [];
+    QueryBuilder<ParseObject> queryLaws =
+        QueryBuilder<ParseObject>(ParseObject(LawEntity.className));
+    queryLaws.whereRelatedTo('laws', 'Person', personId);
+    final ParseResponse responseLaws = await queryLaws.query();
+    if (responseLaws.success && responseLaws.results != null) {
+      laws = [
+        ...responseLaws.results!
+            .map<LawModel>((e) => LawEntity().fromParse(e as ParseObject))
+            .toList()
+      ];
+      // laws.addAll(responseLaws.results!
+      //     .map<LawModel>((e) => LawEntity().fromParse(e as ParseObject))
+      //     .toList());
+    }
+    //--- get laws
+    return laws;
+  }
+
+  @override
+  Future<void> updateRelationImages(
+      String personId, List<PersonImageModel> modelList) async {
+    final parseObject = PersonEntity().toParseUpdateRelationImages(
+        personId: personId, modelList: modelList, add: true);
     if (parseObject != null) {
       await parseObject.save();
     }
-    final parseObject2 = PersonEntity().toParseRemoveRelation(model);
+    final parseObject2 = PersonEntity().toParseUpdateRelationImages(
+        personId: personId, modelList: modelList, add: false);
     if (parseObject2 != null) {
       await parseObject2.save();
     }
-    return true;
+  }
+
+  @override
+  Future<void> updateRelationLaws(
+      String personId, List<LawModel> modelList) async {
+    final parseObject = PersonEntity().toParseUpdateRelationLaws(
+        personId: personId, modelList: modelList, add: true);
+
+    if (parseObject != null) {
+      await parseObject.save();
+    }
+    final parseObject2 = PersonEntity().toParseUpdateRelationLaws(
+        personId: personId, modelList: modelList, add: false);
+    if (parseObject2 != null) {
+      await parseObject2.save();
+    }
   }
 
   // @override

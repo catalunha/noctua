@@ -38,7 +38,9 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final _personList = <PersonModel>[].obs;
   List<PersonModel> get personList => _personList;
 
-  var lawList = <LawModel>[].obs;
+  var personImageList = <PersonImageModel>[].obs;
+
+  var allLaws = <LawModel>[].obs;
   var lawIdSelectedList = <String>[].obs;
 
   final _person = Rxn<PersonModel>();
@@ -76,55 +78,55 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     }
   }
 
-  void add() {
-    _person.value = null;
-    xfile = null;
-    onSelectedDate();
-    Get.toNamed(Routes.personAddEdit);
-  }
-
-  void addEditImage(String id) {
+  List<LawModel> lawListSaved = [];
+  void addDeleteLaw(String id) async {
     var phraseTemp = _personList.firstWhere((element) => element.id == id);
     _person(phraseTemp);
-    xfile = null;
-    Get.toNamed(Routes.personAddEditImage);
-  }
+    lawListSaved.clear();
+    lawListSaved = await _personUseCase.readRelationLaws(id);
 
-  void addEditLaw(String id) async {
-    var phraseTemp = _personList.firstWhere((element) => element.id == id);
-    _person(phraseTemp);
-    List<LawModel> temp = await _lawUseCase.list();
-    lawList(temp);
+    List<LawModel> allLawsTemp = await _lawUseCase.list();
+    allLaws(allLawsTemp);
     lawIdSelectedList.clear();
-    for (var element in person!.laws!) {
+    for (var element in lawListSaved) {
       lawIdSelectedList.add(element.id!);
     }
     Get.toNamed(Routes.personAddEditLaw);
   }
 
-  void onAddEditlaw() async {
+  onUpdateLawIdSelectedList(String lawId) {
+    if (lawIdSelectedList.contains(lawId)) {
+      lawIdSelectedList.remove(lawId);
+    } else {
+      lawIdSelectedList.add(lawId);
+    }
+  }
+
+  void onAddDeletelaw() async {
     try {
       _loading(true);
-      List<LawModel> lawsOld = [...person!.laws!];
+      List<LawModel> lawsOld = [...lawListSaved];
       List<LawModel> lawsNew = [];
       List<String> lawIdSelectedListUpdated = [...lawIdSelectedList];
       // laws.removeWhere((element) => !lawIdSelectedList.contains(element.id));
       for (var law in lawsOld) {
         if (lawIdSelectedList.contains(law.id)) {
-          lawsNew.add(law);
+          // lawsNew.add(law);
           lawIdSelectedListUpdated.remove(law.id);
         } else {
           lawsNew.add(law.copyWith(isDeleted: true));
         }
       }
       for (var lawUpdated in lawIdSelectedListUpdated) {
-        lawsNew.add(lawList
+        lawsNew.add(allLaws
             .firstWhere((e) => e.id == lawUpdated)
             .copyWith(isDeleted: false));
       }
-      PersonModel personModel = _person.value!.copyWith(laws: lawsNew);
-      //print(personModel.laws);
-      await _personUseCase.updateRelation(personModel);
+      // PersonModel personModel = _person.value!.copyWith(laws: lawsNew);
+      // _person.refresh();
+      if (lawsNew.isNotEmpty) {
+        await _personUseCase.updateRelationLaws(person!.id!, lawsNew);
+      }
     } catch (e) {
       //print('====================');
       //print(e);
@@ -134,18 +136,17 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         isError: true,
       );
     } finally {
-      await listAll();
+      // await listAll();
       _loading(false);
       Get.back();
     }
   }
 
-  onUpdateLawIdSelectedList(String lawId) {
-    if (lawIdSelectedList.contains(lawId)) {
-      lawIdSelectedList.remove(lawId);
-    } else {
-      lawIdSelectedList.add(lawId);
-    }
+  void add() {
+    _person.value = null;
+    xfile = null;
+    onSelectedDate();
+    Get.toNamed(Routes.personAddEdit);
   }
 
   void edit(String id) {
@@ -157,9 +158,13 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     Get.toNamed(Routes.personAddEdit);
   }
 
-  void viewData(String id) {
+  void viewData(String id) async {
     var phraseTemp = _personList.firstWhere((element) => element.id == id);
     _person(phraseTemp);
+    List<PersonImageModel> images = await _personUseCase.readRelationImages(id);
+    List<LawModel> laws = await _personUseCase.readRelationLaws(id);
+    _person.value = _person.value!.copyWith(images: images, laws: laws);
+    _person.refresh();
     Get.toNamed(Routes.personData);
   }
 
@@ -228,7 +233,16 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     }
   }
 
-  Future<void> onAddEditImage({
+  void addDeleteImage(String id) async {
+    var phraseTemp = _personList.firstWhere((element) => element.id == id);
+    _person(phraseTemp);
+    xfile = null;
+    List<PersonImageModel> images = await _personUseCase.readRelationImages(id);
+    personImageList(images);
+    Get.toNamed(Routes.personAddEditImage);
+  }
+
+  Future<void> onAddImage({
     String note = '',
   }) async {
     try {
@@ -236,33 +250,35 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       if (xfile != null) {
         PersonImageModel personImageModel = PersonImageModel(
           note: note,
-          isDeleted: false,
         );
         String personImageId = await _personImageUseCase.add(personImageModel);
-        String? url = await XFileToParseFile.xFileToParseFile(
+        String? personImageIdUrl = await XFileToParseFile.xFileToParseFile(
           xfile: xfile!,
           className: PersonImageEntity.className,
           objectId: personImageId,
           objectAttribute: 'photo',
         );
         xfile = null;
-        personImageModel =
-            personImageModel.copyWith(id: personImageId, photo: url);
-        List<PersonImageModel> images = person!.images!;
-        images.add(personImageModel);
-        // _person.value!.images!.add(personImageModel);
-        PersonModel personModel = _person.value!.copyWith(images: images);
-        _person.refresh();
-        await _personUseCase.updateRelation(personModel);
+        personImageModel = personImageModel.copyWith(
+          id: personImageId,
+          photo: personImageIdUrl,
+          isDeleted: false,
+        );
+        // List<PersonImageModel> images = person!.images!;
+        personImageList.add(personImageModel);
+        // PersonModel personModel = _person.value!.copyWith(images: images);
+        // _person.refresh();
+        await _personUseCase
+            .updateRelationImages(person!.id!, [personImageModel]);
       }
     } on PersonImageRepositoryException {
       _message.value = MessageModel(
         title: 'Erro em Repository',
-        message: 'Nao foi possivel salvar os dados',
+        message: 'Nao foi possivel salvar imagens',
         isError: true,
       );
     } finally {
-      await listAll();
+      // await listAll();
       _loading(false);
       // Get.back();
     }
@@ -279,23 +295,26 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       // _person.value!.images!.removeWhere((e) => e.id == objectImageId);
       // PersonImageModel modelTemp = model.copyWith(isDeleted: true);
       // _person.value!.images!.add(modelTemp);
-      List<PersonImageModel> images = [...person!.images!];
-      PersonImageModel model = images.firstWhere((e) => e.id == objectImageId);
+      // List<PersonImageModel> images = [...person!.images!];
+      PersonImageModel model =
+          personImageList.firstWhere((e) => e.id == objectImageId);
+      // int id = personImageList.indexWhere((e) => e.id == objectImageId);
       //print('atualizando: ${model.id}');
       PersonImageModel modelTemp = model.copyWith(isDeleted: true);
-      images.removeWhere((e) => e.id == objectImageId);
-      images.add(modelTemp);
-      PersonModel personModel = _person.value!.copyWith(images: images);
-      _person.update((val) {
-        // val.images!.add(modelTemp);
-        val!.images!.removeWhere((e) => e.id == objectImageId);
-      });
-
-      _person.refresh();
+      personImageList.removeWhere((e) => e.id == objectImageId);
+      // personImageList.fillRange(id, id + 1, modelTemp);
+      // personImageList.removeWhere((e) => e.id == objectImageId);
+      // personImageList.add(modelTemp);
+      // PersonModel personModel = _person.value!.copyWith(images: images);
+      // _person.update((val) {
+      //   // val.images!.add(modelTemp);
+      //   val!.images!.removeWhere((e) => e.id == objectImageId);
+      // });
+      // _person.refresh();
 
       // //print(person!.images!.length);
       // //print(_person.value!.images!.length);
-      await _personUseCase.updateRelation(personModel);
+      await _personUseCase.updateRelationImages(person!.id!, [modelTemp]);
     } catch (e) {
       _message.value = MessageModel(
         title: 'Erro',
@@ -303,7 +322,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         isError: true,
       );
     } finally {
-      await listAll();
+      // await listAll();
       _loading(false);
       // Get.back();
     }

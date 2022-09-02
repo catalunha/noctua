@@ -31,16 +31,15 @@ class _PersonAddEditImageState extends State<PersonAddEditImage> {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                    'Imagens já disponíveis (${widget._personController.person?.images?.length.toString() ?? ""}):'),
-                if (widget._personController.person!.images != null &&
-                    widget._personController.person!.images!.isNotEmpty)
-                  ...widget._personController.person!.images!
+                    'Imagens já disponíveis (${widget._personController.personImageList.length.toString() ?? ""}):'),
+                if (widget._personController.personImageList.isNotEmpty)
+                  ...widget._personController.personImageList
                       .map((e) => image(e.id!, e.photo!))
                       .toList(),
                 PersonPhoto(),
                 ElevatedButton(
                     onPressed: () {
-                      widget._personController.onAddEditImage();
+                      widget._personController.onAddImage();
                     },
                     child: const Text('Enviar'))
               ],

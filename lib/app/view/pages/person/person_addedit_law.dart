@@ -33,7 +33,7 @@ class _PersonAddEditLawState extends State<PersonAddEditLaw> {
                 const SizedBox(height: 5),
                 Text(
                     'Leis (${widget._personController.lawIdSelectedList.length}):'),
-                ...widget._personController.lawList.map((e) => law(e)).toList(),
+                ...widget._personController.allLaws.map((e) => law(e)).toList(),
               ],
             ),
           ),
@@ -41,7 +41,7 @@ class _PersonAddEditLawState extends State<PersonAddEditLaw> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          widget._personController.onAddEditlaw();
+          widget._personController.onAddDeletelaw();
         },
         child: const Icon(AppIconData.saveInCloud),
       ),

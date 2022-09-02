@@ -1,4 +1,6 @@
 import 'package:noctua/app/data/repositories/person_repository.dart';
+import 'package:noctua/app/domain/models/person_image_model.dart';
+import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/domain/usecases/person/person_filter.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
@@ -26,9 +28,27 @@ class PersonUseCaseImpl implements PersonUseCase {
   @override
   Future<String> addEdit(PersonModel model) async =>
       await _repository.addEdit(model);
+
   @override
-  Future<bool> updateRelation(PersonModel model) async =>
-      await _repository.updateRelation(model);
+  Future<List<PersonImageModel>> readRelationImages(String personId) async =>
+      await _repository.readRelationImages(personId);
+  @override
+  Future<List<LawModel>> readRelationLaws(String personId) async =>
+      await _repository.readRelationLaws(personId);
+
+  @override
+  Future<void> updateRelationImages(
+          String personId, List<PersonImageModel> modelList) async =>
+      await _repository.updateRelationImages(personId, modelList);
+
+  @override
+  Future<void> updateRelationLaws(
+          String personId, List<LawModel> modelList) async =>
+      await _repository.updateRelationLaws(personId, modelList);
+
+  // @override
+  // Future<bool> updateRelation(PersonModel model) async =>
+  //     await _repository.updateRelation(model);
   // @override
   // Future<String> update(PersonModel model) async =>
   //     await _repository.update(model);

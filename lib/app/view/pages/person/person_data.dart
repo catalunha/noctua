@@ -85,7 +85,13 @@ class PersonData extends StatelessWidget {
                     .map((e) => Image.network(
                           e.photo!,
                         ))
-                    .toList()
+                    .toList(),
+              const Divider(),
+              const Text('id:'),
+              Text(
+                _personController.person!.id!,
+                style: AppTheme.textRed18Bold,
+              ),
             ],
           ),
         ),
