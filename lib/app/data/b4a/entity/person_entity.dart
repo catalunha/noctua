@@ -11,30 +11,41 @@ class PersonEntity {
   Future<PersonModel> fromParse(ParseObject parseObject) async {
     //print('PersonEntity: ${parseObject.objectId}');
     //+++ get laws
-    final List<LawModel> laws = [];
-    QueryBuilder<ParseObject> queryLaws =
-        QueryBuilder<ParseObject>(ParseObject(LawEntity.className));
-    queryLaws.whereRelatedTo('laws', 'Person', parseObject.objectId!);
-    final ParseResponse responseLaws = await queryLaws.query();
-    if (responseLaws.success && responseLaws.results != null) {
-      laws.addAll(responseLaws.results!
-          .map<LawModel>((e) => LawEntity().fromParse(e as ParseObject))
-          .toList());
-    }
+    List<LawModel> laws = [];
+    // QueryBuilder<ParseObject> queryLaws =
+    //     QueryBuilder<ParseObject>(ParseObject(LawEntity.className));
+    // queryLaws.whereRelatedTo('laws', 'Person', parseObject.objectId!);
+    // final ParseResponse responseLaws = await queryLaws.query();
+    // if (responseLaws.success && responseLaws.results != null) {
+    //   laws = [
+    //     ...responseLaws.results!
+    //         .map<LawModel>((e) => LawEntity().fromParse(e as ParseObject))
+    //         .toList()
+    //   ];
+    //   // laws.addAll(responseLaws.results!
+    //   //     .map<LawModel>((e) => LawEntity().fromParse(e as ParseObject))
+    //   //     .toList());
+    // }
     //--- get laws
     //+++ get images
-    final List<PersonImageModel> images = [];
-    QueryBuilder<ParseObject> queryImages =
-        QueryBuilder<ParseObject>(ParseObject(PersonImageEntity.className));
-    queryImages.whereRelatedTo('images', 'Person', parseObject.objectId!);
-    final ParseResponse responseImages = await queryImages.query();
-    if (responseImages.success && responseImages.results != null) {
-      images.addAll(responseImages.results!
-          .map<PersonImageModel>(
-              (e) => PersonImageEntity().fromParse(e as ParseObject))
-          .toList());
-    }
+    List<PersonImageModel> images = [];
+    // QueryBuilder<ParseObject> queryImages =
+    //     QueryBuilder<ParseObject>(ParseObject(PersonImageEntity.className));
+    // queryImages.whereRelatedTo('images', 'Person', parseObject.objectId!);
+    // final ParseResponse responseImages = await queryImages.query();
+    // if (responseImages.success && responseImages.results != null) {
+    //   images = [
+    //     ...responseImages.results!
+    //         .map<PersonImageModel>(
+    //             (e) => PersonImageEntity().fromParse(e as ParseObject))
+    //         .toList()
+    //   ]; // images.addAll(responseImages.results!
+    //   //     .map<PersonImageModel>(
+    //   //         (e) => PersonImageEntity().fromParse(e as ParseObject))
+    //   //     .toList());
+    // }
     //--- get images
+    print('parseObject: $parseObject');
     PersonModel model = PersonModel(
       id: parseObject.objectId!,
       user: UserEntity().fromParse(parseObject.get('user') as ParseUser),

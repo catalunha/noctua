@@ -23,7 +23,7 @@ class PersonImageRepositoryB4a extends GetxService
   @override
   Future<void> delete(String id) async {
     var parseObject = ParseObject(PersonImageEntity.className)..objectId = id;
-    parseObject.set('isArchived', true);
+    parseObject.set('isDeleted', true);
     await parseObject.delete();
   }
 }

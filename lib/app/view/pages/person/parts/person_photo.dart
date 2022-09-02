@@ -21,12 +21,19 @@ class PersonPhoto extends StatefulWidget {
 
 class _PersonPhotoState extends State<PersonPhoto> {
   final ImagePicker _picker = ImagePicker();
-  XFile? _xfile;
+  // XFile? _xfile;
   bool isLoading = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // _xfile = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: _xfile != null
+      child: widget._personController.xfile != null
           ? Container(
               width: 100,
               height: 100,
@@ -36,7 +43,7 @@ class _PersonPhotoState extends State<PersonPhoto> {
               ),
               child: kIsWeb
                   ? Image.network(
-                      _xfile!.path,
+                      widget._personController.xfile!.path,
                       errorBuilder: (BuildContext context, Object exception,
                           StackTrace? stackTrace) {
                         ////print'error 1');
@@ -44,7 +51,7 @@ class _PersonPhotoState extends State<PersonPhoto> {
                       },
                     )
                   : Image.file(
-                      File(_xfile!.path),
+                      File(widget._personController.xfile!.path),
                       errorBuilder: (BuildContext context, Object exception,
                           StackTrace? stackTrace) {
                         ////print'error 2');
@@ -86,16 +93,16 @@ class _PersonPhotoState extends State<PersonPhoto> {
                 ),
       onTap: () async {
         ////print'aqui...');
-        setState(() {
-          _xfile = null;
-        });
+        // setState(() {
+        //   _xfile = null;
+        // });
         final XFile? pickedFile =
             await _picker.pickImage(source: ImageSource.gallery);
 
         if (pickedFile != null) {
           widget._personController.xfile = pickedFile;
           setState(() {
-            _xfile = pickedFile;
+            // _xfile = pickedFile;
           });
         }
       },

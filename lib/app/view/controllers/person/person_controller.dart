@@ -44,10 +44,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final _person = Rxn<PersonModel>();
   PersonModel? get person => _person.value;
 
-  XFile? _xfile;
-  set xfile(XFile? xfile) {
-    _xfile = xfile;
-  }
+  XFile? xfile;
 
   final Rxn<DateTime> _selectedDate = Rxn<DateTime>();
   DateTime? get selectedDate => _selectedDate.value;
@@ -89,6 +86,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   void addEditImage(String id) {
     var phraseTemp = _personList.firstWhere((element) => element.id == id);
     _person(phraseTemp);
+    xfile = null;
     Get.toNamed(Routes.personAddEditImage);
   }
 
@@ -154,6 +152,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     var phraseTemp = _personList.firstWhere((element) => element.id == id);
     _person(phraseTemp);
     onSelectedDate();
+    xfile = null;
+
     Get.toNamed(Routes.personAddEdit);
   }
 
@@ -206,14 +206,15 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
           images: [],
           laws: []);
       String personId = await _personUseCase.addEdit(model);
-      if (_xfile != null) {
+      if (xfile != null) {
         await XFileToParseFile.xFileToParseFile(
-          xfile: _xfile!,
+          xfile: xfile!,
           className: PersonEntity.className,
           objectId: personId,
           objectAttribute: 'photo',
         );
       }
+      xfile = null;
     } on PersonRepositoryException {
       _message.value = MessageModel(
         title: 'Erro em Repository',
@@ -232,18 +233,19 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   }) async {
     try {
       _loading(true);
-      if (_xfile != null) {
+      if (xfile != null) {
         PersonImageModel personImageModel = PersonImageModel(
           note: note,
           isDeleted: false,
         );
         String personImageId = await _personImageUseCase.add(personImageModel);
         String? url = await XFileToParseFile.xFileToParseFile(
-          xfile: _xfile!,
+          xfile: xfile!,
           className: PersonImageEntity.className,
           objectId: personImageId,
           objectAttribute: 'photo',
         );
+        xfile = null;
         personImageModel =
             personImageModel.copyWith(id: personImageId, photo: url);
         List<PersonImageModel> images = person!.images!;

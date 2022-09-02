@@ -14,7 +14,7 @@ class InitBack4app {
       keyParseServerUrl,
       clientKey: keyClientKey,
       autoSendSessionId: true,
-      // debug: true,
+      debug: true,
     );
     return (await Parse().healthCheck()).success;
   }
