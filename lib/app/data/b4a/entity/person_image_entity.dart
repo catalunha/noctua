@@ -21,7 +21,7 @@ class PersonImageEntity {
       parseObject.objectId = model.id;
     }
     parseObject.set('person',
-        (ParseObject('Person')..objectId = model.person!.id).toPointer());
+        (ParseObject('Person')..objectId = model.person.id).toPointer());
     return parseObject;
   }
 }

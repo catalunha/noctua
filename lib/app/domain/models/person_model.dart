@@ -13,8 +13,10 @@ class PersonModel {
   final UserModel user;
   final bool isMale;
   final String? name;
+  final List<String>? nameWords;
   final List<String>? alias;
   final String? mother;
+  final List<String>? motherWords;
   final String? note;
   final String? history;
   final String? photo;
@@ -31,8 +33,10 @@ class PersonModel {
     required this.user,
     this.isMale = true,
     this.name,
+    this.nameWords,
     this.alias,
     this.mother,
+    this.motherWords,
     this.note,
     this.history,
     this.photo,
@@ -50,8 +54,10 @@ class PersonModel {
     UserModel? user,
     bool? isMale,
     String? name,
+    List<String>? nameWords,
     List<String>? alias,
     String? mother,
+    List<String>? motherWords,
     String? note,
     String? history,
     String? photo,
@@ -68,8 +74,10 @@ class PersonModel {
       user: user ?? this.user,
       isMale: isMale ?? this.isMale,
       name: name ?? this.name,
+      nameWords: nameWords ?? this.nameWords,
       alias: alias ?? this.alias,
       mother: mother ?? this.mother,
+      motherWords: motherWords ?? this.motherWords,
       note: note ?? this.note,
       history: history ?? this.history,
       photo: photo ?? this.photo,
@@ -84,41 +92,73 @@ class PersonModel {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'user': user.toMap(),
-      'isMale': isMale,
-      'name': name,
-      'alias': alias,
-      'mother': mother,
-      'note': note,
-      'history': history,
-      'photo': photo,
-      'cpf': cpf,
-      'birthday': birthday,
-      'laws': laws?.map((x) => x.toMap()).toList(),
-      'images': images?.map((x) => x.toMap()).toList(),
-      'isArchived': isArchived,
-      'isDeleted': isDeleted,
-      'isPublic': isPublic,
-    };
+    final result = <String, dynamic>{};
+
+    if (id != null) {
+      result.addAll({'id': id});
+    }
+    result.addAll({'user': user.toMap()});
+    result.addAll({'isMale': isMale});
+    if (name != null) {
+      result.addAll({'name': name});
+    }
+    if (nameWords != null) {
+      result.addAll({'nameWords': nameWords});
+    }
+    if (alias != null) {
+      result.addAll({'alias': alias});
+    }
+    if (mother != null) {
+      result.addAll({'mother': mother});
+    }
+    if (motherWords != null) {
+      result.addAll({'motherWords': motherWords});
+    }
+    if (note != null) {
+      result.addAll({'note': note});
+    }
+    if (history != null) {
+      result.addAll({'history': history});
+    }
+    if (photo != null) {
+      result.addAll({'photo': photo});
+    }
+    if (cpf != null) {
+      result.addAll({'cpf': cpf});
+    }
+    if (birthday != null) {
+      result.addAll({'birthday': birthday!.millisecondsSinceEpoch});
+    }
+    if (laws != null) {
+      result.addAll({'laws': laws!.map((x) => x.toMap()).toList()});
+    }
+    if (images != null) {
+      result.addAll({'images': images!.map((x) => x.toMap()).toList()});
+    }
+    result.addAll({'isArchived': isArchived});
+    result.addAll({'isDeleted': isDeleted});
+    result.addAll({'isPublic': isPublic});
+
+    return result;
   }
 
   factory PersonModel.fromMap(Map<String, dynamic> map) {
     return PersonModel(
-      id: map['id'] != null ? map['id'] as String : null,
-      user: UserModel.fromMap(map['user'] as Map<String, dynamic>),
-      isMale: map['isMale'] as bool,
-      name: map['name'] != null ? map['name'] as String : null,
-      alias: map['alias'] != null
-          ? List<String>.from((map['alias'] as List<String>))
+      id: map['id'],
+      user: UserModel.fromMap(map['user']),
+      isMale: map['isMale'] ?? false,
+      name: map['name'],
+      nameWords: List<String>.from(map['nameWords']),
+      alias: List<String>.from(map['alias']),
+      mother: map['mother'],
+      motherWords: List<String>.from(map['motherWords']),
+      note: map['note'],
+      history: map['history'],
+      photo: map['photo'],
+      cpf: map['cpf'],
+      birthday: map['birthday'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['birthday'])
           : null,
-      mother: map['mother'] != null ? map['mother'] as String : null,
-      note: map['note'] != null ? map['note'] as String : null,
-      history: map['history'] != null ? map['history'] as String : null,
-      photo: map['photo'] != null ? map['photo'] as String : null,
-      cpf: map['cpf'] != null ? map['cpf'] as String : null,
-      birthday: map['birthday'],
       laws: map['laws'] != null
           ? List<LawModel>.from(map['laws']?.map((x) => LawModel.fromMap(x)))
           : null,
@@ -126,9 +166,9 @@ class PersonModel {
           ? List<PersonImageModel>.from(
               map['images']?.map((x) => PersonImageModel.fromMap(x)))
           : null,
-      isArchived: map['isArchived'] as bool,
-      isDeleted: map['isDeleted'] as bool,
-      isPublic: map['isPublic'] as bool,
+      isArchived: map['isArchived'] ?? false,
+      isDeleted: map['isDeleted'] ?? false,
+      isPublic: map['isPublic'] ?? false,
     );
   }
 
@@ -139,19 +179,22 @@ class PersonModel {
 
   @override
   String toString() {
-    return 'PersonModel(id: $id, user: $user, isMale: $isMale, name: $name, alias: $alias, mother: $mother, note: $note, history: $history, photo: $photo, cpf: $cpf, birthday: $birthday, laws: $laws, images: $images, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic)';
+    return 'PersonModel(id: $id, user: $user, isMale: $isMale, name: $name, nameWords: $nameWords, alias: $alias, mother: $mother, motherWords: $motherWords, note: $note, history: $history, photo: $photo, cpf: $cpf, birthday: $birthday, laws: $laws, images: $images, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic)';
   }
 
   @override
-  bool operator ==(covariant PersonModel other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other.id == id &&
+    return other is PersonModel &&
+        other.id == id &&
         other.user == user &&
         other.isMale == isMale &&
         other.name == name &&
+        listEquals(other.nameWords, nameWords) &&
         listEquals(other.alias, alias) &&
         other.mother == mother &&
+        listEquals(other.motherWords, motherWords) &&
         other.note == note &&
         other.history == history &&
         other.photo == photo &&
@@ -170,8 +213,10 @@ class PersonModel {
         user.hashCode ^
         isMale.hashCode ^
         name.hashCode ^
+        nameWords.hashCode ^
         alias.hashCode ^
         mother.hashCode ^
+        motherWords.hashCode ^
         note.hashCode ^
         history.hashCode ^
         photo.hashCode ^
@@ -187,5 +232,5 @@ class PersonModel {
   String toJson() => json.encode(toMap());
 
   factory PersonModel.fromJson(String source) =>
-      PersonModel.fromMap(json.decode(source) as Map<String, dynamic>);
+      PersonModel.fromMap(json.decode(source));
 }

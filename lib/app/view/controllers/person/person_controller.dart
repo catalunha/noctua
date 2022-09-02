@@ -78,6 +78,107 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     }
   }
 
+  void add() {
+    _person.value = null;
+    xfile = null;
+    onSelectedDate();
+    Get.toNamed(Routes.personAddEdit);
+  }
+
+  void edit(String id) {
+    var phraseTemp = _personList.firstWhere((element) => element.id == id);
+    _person(phraseTemp);
+    onSelectedDate();
+    xfile = null;
+
+    Get.toNamed(Routes.personAddEdit);
+  }
+
+  Future<void> addedit({
+    bool isMale = true,
+    String name = '',
+    String cpf = '',
+    String alias = '',
+    String mother = '',
+    String note = '',
+    String history = '',
+    bool isArchived = false,
+    bool isPublic = false,
+    bool isDeleted = false,
+  }) async {
+    // debug////print'addedit $phrase');
+    try {
+      _loading(true);
+      UserModel userModel;
+      String? modelId;
+      String? photo;
+      if (person == null) {
+        SplashController splashController = Get.find();
+        userModel = splashController.userModel!;
+      } else {
+        userModel = person!.user;
+        modelId = person!.id;
+        photo = person!.photo;
+      }
+      List<String> aliasTemp =
+          alias.split(',').map((e) => e.trim().toLowerCase()).toList();
+      List<String> nameWordsTemp =
+          name.split(' ').map((e) => e.trim().toLowerCase()).toList();
+      List<String> motherWordsTemp =
+          mother.split(' ').map((e) => e.trim().toLowerCase()).toList();
+      aliasTemp.removeWhere((e) => e.isEmpty);
+      PersonModel model = PersonModel(
+        id: modelId,
+        user: userModel,
+        isMale: isMale,
+        name: name,
+        nameWords: nameWordsTemp,
+        cpf: cpf,
+        birthday: selectedDate,
+        alias: aliasTemp,
+        mother: mother,
+        motherWords: motherWordsTemp,
+        history: history,
+        note: note,
+        isArchived: isArchived,
+        isPublic: isPublic,
+        isDeleted: isDeleted,
+      );
+      String personId = await _personUseCase.addEdit(model);
+      if (xfile != null) {
+        photo = await XFileToParseFile.xFileToParseFile(
+          xfile: xfile!,
+          className: PersonEntity.className,
+          objectId: personId,
+          objectAttribute: 'photo',
+        );
+      }
+      xfile = null;
+      PersonModel modelFinal = model.copyWith(id: personId, photo: photo);
+      int index = _personList.indexWhere((e) => e.id == personId);
+      _personList.fillRange(index, index + 1, modelFinal);
+    } on PersonRepositoryException {
+      _message.value = MessageModel(
+        title: 'Erro em Repository',
+        message: 'Nao foi possivel salvar os dados',
+        isError: true,
+      );
+    } finally {
+      _loading(false);
+      Get.back();
+    }
+  }
+
+  void viewData(String id) async {
+    var phraseTemp = _personList.firstWhere((element) => element.id == id);
+    _person(phraseTemp);
+    List<PersonImageModel> images = await _personUseCase.readRelationImages(id);
+    List<LawModel> laws = await _personUseCase.readRelationLaws(id);
+    _person.value = _person.value!.copyWith(images: images, laws: laws);
+    _person.refresh();
+    Get.toNamed(Routes.personData);
+  }
+
   List<LawModel> lawListSaved = [];
   void addDeleteLaw(String id) async {
     var phraseTemp = _personList.firstWhere((element) => element.id == id);
@@ -137,100 +238,6 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       );
     } finally {
       // await listAll();
-      _loading(false);
-      Get.back();
-    }
-  }
-
-  void add() {
-    _person.value = null;
-    xfile = null;
-    onSelectedDate();
-    Get.toNamed(Routes.personAddEdit);
-  }
-
-  void edit(String id) {
-    var phraseTemp = _personList.firstWhere((element) => element.id == id);
-    _person(phraseTemp);
-    onSelectedDate();
-    xfile = null;
-
-    Get.toNamed(Routes.personAddEdit);
-  }
-
-  void viewData(String id) async {
-    var phraseTemp = _personList.firstWhere((element) => element.id == id);
-    _person(phraseTemp);
-    List<PersonImageModel> images = await _personUseCase.readRelationImages(id);
-    List<LawModel> laws = await _personUseCase.readRelationLaws(id);
-    _person.value = _person.value!.copyWith(images: images, laws: laws);
-    _person.refresh();
-    Get.toNamed(Routes.personData);
-  }
-
-  Future<void> addedit({
-    bool isMale = true,
-    String name = '',
-    String cpf = '',
-    String alias = '',
-    String mother = '',
-    String note = '',
-    String history = '',
-    bool isArchived = false,
-    bool isPublic = false,
-    bool isDeleted = false,
-  }) async {
-    // debug////print'addedit $phrase');
-    try {
-      _loading(true);
-      UserModel userModel;
-      String? modelId;
-      String? photo;
-      if (person == null) {
-        SplashController splashController = Get.find();
-        userModel = splashController.userModel!;
-      } else {
-        userModel = person!.user;
-        modelId = person!.id;
-        photo = person!.photo;
-      }
-      List<String> aliasTemp = alias.split(',').map((e) => e.trim()).toList();
-      aliasTemp.removeWhere((e) => e.isEmpty);
-      PersonModel model = PersonModel(
-        id: modelId,
-        user: userModel,
-        isMale: isMale,
-        name: name,
-        cpf: cpf,
-        birthday: selectedDate,
-        alias: aliasTemp,
-        mother: mother,
-        history: history,
-        note: note,
-        isArchived: isArchived,
-        isPublic: isPublic,
-        isDeleted: isDeleted,
-      );
-      String personId = await _personUseCase.addEdit(model);
-      if (xfile != null) {
-        photo = await XFileToParseFile.xFileToParseFile(
-          xfile: xfile!,
-          className: PersonEntity.className,
-          objectId: personId,
-          objectAttribute: 'photo',
-        );
-      }
-      xfile = null;
-      PersonModel modelFinal = model.copyWith(id: personId, photo: photo);
-      int index = _personList.indexWhere((e) => e.id == personId);
-      _personList.fillRange(index, index + 1, modelFinal);
-    } on PersonRepositoryException {
-      _message.value = MessageModel(
-        title: 'Erro em Repository',
-        message: 'Nao foi possivel salvar os dados',
-        isError: true,
-      );
-    } finally {
       _loading(false);
       Get.back();
     }

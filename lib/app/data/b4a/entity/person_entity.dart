@@ -80,11 +80,13 @@ class PersonEntity {
     var currentUser = await ParseUser.currentUser() as ParseUser?;
     parseObject.set('user', currentUser);
     parseObject.set('name', model.name);
+    parseObject.set('nameWords', model.nameWords);
     parseObject.set('isMale', model.isMale);
     parseObject.set('alias', model.alias);
     parseObject.set('history', model.history);
     parseObject.set('note', model.note);
     parseObject.set('mother', model.mother);
+    parseObject.set('motherWords', model.motherWords);
     parseObject.set('isArchived', model.isArchived);
     parseObject.set('isDeleted', model.isDeleted);
     parseObject.set('isPublic', model.isPublic);
