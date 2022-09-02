@@ -185,34 +185,35 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       _loading(true);
       UserModel userModel;
       String? modelId;
+      String? photo;
       if (person == null) {
         SplashController splashController = Get.find();
         userModel = splashController.userModel!;
       } else {
         userModel = person!.user;
         modelId = person!.id;
+        photo = person!.photo;
       }
       List<String> aliasTemp = alias.split(',').map((e) => e.trim()).toList();
       aliasTemp.removeWhere((e) => e.isEmpty);
       PersonModel model = PersonModel(
-          id: modelId,
-          user: userModel,
-          isMale: isMale,
-          name: name,
-          cpf: cpf,
-          birthday: selectedDate,
-          alias: aliasTemp,
-          mother: mother,
-          history: history,
-          note: note,
-          isArchived: isArchived,
-          isPublic: isPublic,
-          isDeleted: isDeleted,
-          images: [],
-          laws: []);
+        id: modelId,
+        user: userModel,
+        isMale: isMale,
+        name: name,
+        cpf: cpf,
+        birthday: selectedDate,
+        alias: aliasTemp,
+        mother: mother,
+        history: history,
+        note: note,
+        isArchived: isArchived,
+        isPublic: isPublic,
+        isDeleted: isDeleted,
+      );
       String personId = await _personUseCase.addEdit(model);
       if (xfile != null) {
-        await XFileToParseFile.xFileToParseFile(
+        photo = await XFileToParseFile.xFileToParseFile(
           xfile: xfile!,
           className: PersonEntity.className,
           objectId: personId,
@@ -220,6 +221,9 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         );
       }
       xfile = null;
+      PersonModel modelFinal = model.copyWith(id: personId, photo: photo);
+      int index = _personList.indexWhere((e) => e.id == personId);
+      _personList.fillRange(index, index + 1, modelFinal);
     } on PersonRepositoryException {
       _message.value = MessageModel(
         title: 'Erro em Repository',
@@ -227,7 +231,6 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         isError: true,
       );
     } finally {
-      listAll();
       _loading(false);
       Get.back();
     }
@@ -249,7 +252,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       _loading(true);
       if (xfile != null) {
         PersonImageModel personImageModel = PersonImageModel(
-          note: note,
+          person: person!,
         );
         String personImageId = await _personImageUseCase.add(personImageModel);
         String? personImageIdUrl = await XFileToParseFile.xFileToParseFile(

@@ -1,28 +1,30 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:noctua/app/domain/models/person_model.dart';
+
 class PersonImageModel {
   final String? id;
   final String? photo;
-  final String? note;
+  final PersonModel person;
   final bool? isDeleted;
   PersonImageModel({
     this.id,
     this.photo,
-    this.note,
+    required this.person,
     this.isDeleted,
   });
 
   PersonImageModel copyWith({
     String? id,
     String? photo,
-    String? note,
+    PersonModel? person,
     bool? isDeleted,
   }) {
     return PersonImageModel(
       id: id ?? this.id,
       photo: photo ?? this.photo,
-      note: note ?? this.note,
+      person: person ?? this.person,
       isDeleted: isDeleted ?? this.isDeleted,
     );
   }
@@ -36,9 +38,7 @@ class PersonImageModel {
     if (photo != null) {
       result.addAll({'photo': photo});
     }
-    if (note != null) {
-      result.addAll({'note': note});
-    }
+    result.addAll({'person': person.toMap()});
     if (isDeleted != null) {
       result.addAll({'isDeleted': isDeleted});
     }
@@ -50,7 +50,7 @@ class PersonImageModel {
     return PersonImageModel(
       id: map['id'],
       photo: map['photo'],
-      note: map['note'],
+      person: PersonModel.fromMap(map['person']),
       isDeleted: map['isDeleted'],
     );
   }
@@ -62,7 +62,7 @@ class PersonImageModel {
 
   @override
   String toString() {
-    return 'PersonImageModel(id: $id, photo: $photo, note: $note, isDeleted: $isDeleted)';
+    return 'PersonImageModel(id: $id, photo: $photo, person: $person, isDeleted: $isDeleted)';
   }
 
   @override
@@ -72,12 +72,12 @@ class PersonImageModel {
     return other is PersonImageModel &&
         other.id == id &&
         other.photo == photo &&
-        other.note == note &&
+        other.person == person &&
         other.isDeleted == isDeleted;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ photo.hashCode ^ note.hashCode ^ isDeleted.hashCode;
+    return id.hashCode ^ photo.hashCode ^ person.hashCode ^ isDeleted.hashCode;
   }
 }

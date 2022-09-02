@@ -61,7 +61,7 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
     if (response.success && response.results != null) {
       for (var element in response.results!) {
         //print((element as ParseObject).objectId);
-        listTemp.add(await PersonEntity().fromParse(element));
+        listTemp.add(PersonEntity().fromParse(element));
       }
       return listTemp;
     } else {
@@ -106,6 +106,7 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
     QueryBuilder<ParseObject> queryImages =
         QueryBuilder<ParseObject>(ParseObject(PersonImageEntity.className));
     queryImages.whereRelatedTo('images', 'Person', personId);
+    queryImages.includeObject(['person', 'person.user', 'person.user.profile']);
     final ParseResponse responseImages = await queryImages.query();
     if (responseImages.success && responseImages.results != null) {
       images = [

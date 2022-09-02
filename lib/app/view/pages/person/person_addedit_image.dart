@@ -31,7 +31,7 @@ class _PersonAddEditImageState extends State<PersonAddEditImage> {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                    'Imagens já disponíveis (${widget._personController.personImageList.length.toString() ?? ""}):'),
+                    'Imagens já disponíveis (${widget._personController.personImageList.length}):'),
                 if (widget._personController.personImageList.isNotEmpty)
                   ...widget._personController.personImageList
                       .map((e) => image(e.id!, e.photo!))
@@ -51,8 +51,8 @@ class _PersonAddEditImageState extends State<PersonAddEditImage> {
   }
 
   Widget image(String id, String photo) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
+      // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.network(
           // width: MediaQuery.of(context).size.width * .8,
@@ -63,7 +63,10 @@ class _PersonAddEditImageState extends State<PersonAddEditImage> {
           onPressed: () {
             widget._personController.onDeleteImage(id);
           },
-          icon: const Icon(Icons.delete_forever),
+          icon: const Icon(
+            Icons.delete_forever,
+            color: Colors.red,
+          ),
         )
       ],
     );

@@ -1,3 +1,4 @@
+import 'package:noctua/app/data/b4a/entity/person_entity.dart';
 import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
@@ -9,7 +10,7 @@ class PersonImageEntity {
     PersonImageModel model = PersonImageModel(
       id: parseObject.objectId!,
       photo: parseObject.get('photo')?.get('url'),
-      note: parseObject.get<String>('note'),
+      person: PersonEntity().fromParse(parseObject.get('person')),
     );
     return model;
   }
@@ -19,7 +20,8 @@ class PersonImageEntity {
     if (model.id != null) {
       parseObject.objectId = model.id;
     }
-    parseObject.set('note', model.note);
+    parseObject.set('person',
+        (ParseObject('Person')..objectId = model.person!.id).toPointer());
     return parseObject;
   }
 }
