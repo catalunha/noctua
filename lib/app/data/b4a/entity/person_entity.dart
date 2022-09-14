@@ -57,7 +57,7 @@ class PersonEntity {
               .map((e) => e.toString())
               .toList()
           : [],
-      note: parseObject.get<String>('note'),
+      mark: parseObject.get<String>('mark'),
       history: parseObject.get<String>('history'),
       mother: parseObject.get<String>('mother'),
       cpf: parseObject.get<String>('cpf'),
@@ -84,7 +84,7 @@ class PersonEntity {
     parseObject.set('isMale', model.isMale);
     parseObject.set('alias', model.alias);
     parseObject.set('history', model.history);
-    parseObject.set('note', model.note);
+    parseObject.set('mark', model.mark);
     parseObject.set('mother', model.mother);
     parseObject.set('motherWords', model.motherWords);
     parseObject.set('isArchived', model.isArchived);

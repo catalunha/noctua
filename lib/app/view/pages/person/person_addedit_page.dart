@@ -23,7 +23,7 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
   final _nameTEC = TextEditingController();
   final _cpfTEC = TextEditingController();
   final _historyTEC = TextEditingController();
-  final _noteTEC = TextEditingController();
+  final _markTEC = TextEditingController();
   final _motherTEC = TextEditingController();
   final _aliasTEC = TextEditingController();
   bool _isMale = true;
@@ -38,7 +38,7 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
     _historyTEC.text = widget._personController.person?.history ?? '';
     _motherTEC.text = widget._personController.person?.mother ?? '';
     _aliasTEC.text = widget._personController.person?.alias?.join(', ') ?? '';
-    _noteTEC.text = widget._personController.person?.note ?? '';
+    _markTEC.text = widget._personController.person?.mark ?? '';
     _isMale = widget._personController.person?.isMale ?? true;
     _isArchived = widget._personController.person?.isArchived ?? false;
     _isPublic = widget._personController.person?.isPublic ?? false;
@@ -80,7 +80,7 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
                 ),
                 AppTextFormField(
                   label: 'Características',
-                  controller: _noteTEC,
+                  controller: _markTEC,
                   maxLines: 5,
                 ),
                 AppTextFormField(
@@ -156,7 +156,7 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
               cpf: _cpfTEC.text,
               alias: _aliasTEC.text,
               mother: _motherTEC.text,
-              note: _noteTEC.text,
+              mark: _markTEC.text,
               history: _historyTEC.text,
               isPublic: _isPublic,
               isArchived: _isArchived,

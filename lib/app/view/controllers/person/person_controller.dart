@@ -100,7 +100,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     String cpf = '',
     String alias = '',
     String mother = '',
-    String note = '',
+    String mark = '',
     String history = '',
     bool isArchived = false,
     bool isPublic = false,
@@ -120,26 +120,26 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         modelId = person!.id;
         photo = person!.photo;
       }
-      List<String> aliasTemp =
-          alias.split(',').map((e) => e.trim().toLowerCase()).toList();
-      List<String> nameWordsTemp =
-          name.split(' ').map((e) => e.trim().toLowerCase()).toList();
-      List<String> motherWordsTemp =
-          mother.split(' ').map((e) => e.trim().toLowerCase()).toList();
-      aliasTemp.removeWhere((e) => e.isEmpty);
+      // List<String> aliasTemp =
+      //     alias.split(',').map((e) => e.trim().toLowerCase()).toList();
+      // aliasTemp.removeWhere((e) => e.isEmpty);
+      // List<String> nameWordsTemp =
+      //     name.split(' ').map((e) => e.trim().toLowerCase()).toList();
+      // List<String> motherWordsTemp =
+      //     mother.split(' ').map((e) => e.trim().toLowerCase()).toList();
       PersonModel model = PersonModel(
         id: modelId,
         user: userModel,
         isMale: isMale,
         name: name,
-        nameWords: nameWordsTemp,
+        nameWords: PersonModel.onTextWords(name),
         cpf: cpf,
         birthday: selectedDate,
-        alias: aliasTemp,
+        alias: PersonModel.onTextSplit(alias),
         mother: mother,
-        motherWords: motherWordsTemp,
+        motherWords: PersonModel.onTextWords(mother),
         history: history,
-        note: note,
+        mark: mark,
         isArchived: isArchived,
         isPublic: isPublic,
         isDeleted: isDeleted,
@@ -253,7 +253,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   }
 
   Future<void> onAddImage({
-    String note = '',
+    String mark = '',
   }) async {
     try {
       _loading(true);

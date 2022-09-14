@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:noctua/app/domain/models/group_model.dart';
 import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/user_model.dart';
@@ -17,17 +18,34 @@ class PersonModel {
   final List<String>? alias;
   final String? mother;
   final List<String>? motherWords;
-  final String? note;
-  final String? history;
   final String? photo;
+  final String? mark;
+  final String? history;
   final String? cpf;
   final DateTime? birthday;
   final List<LawModel>? laws;
   final List<PersonImageModel>? images;
+  final List<GroupModel>? group;
 
   final bool isArchived;
   final bool isDeleted;
   final bool isPublic;
+
+  List<int>? photoByte;
+
+  static List<String>? onTextWords(String text) {
+    List<String>? textWords =
+        text.split(' ').map((e) => e.trim().toLowerCase()).toList();
+    return textWords;
+  }
+
+  static List<String>? onTextSplit(String text) {
+    List<String>? aliasTemp =
+        text.split(',').map((e) => e.trim().toLowerCase()).toList();
+    aliasTemp.removeWhere((e) => e.isEmpty);
+    return aliasTemp;
+  }
+
   PersonModel({
     this.id,
     required this.user,
@@ -37,13 +55,14 @@ class PersonModel {
     this.alias,
     this.mother,
     this.motherWords,
-    this.note,
+    this.mark,
     this.history,
     this.photo,
     this.cpf,
     this.birthday,
     this.laws,
     this.images,
+    this.group,
     this.isArchived = false,
     this.isDeleted = false,
     this.isPublic = false,
@@ -58,13 +77,14 @@ class PersonModel {
     List<String>? alias,
     String? mother,
     List<String>? motherWords,
-    String? note,
+    String? mark,
     String? history,
     String? photo,
     String? cpf,
     DateTime? birthday,
     List<LawModel>? laws,
     List<PersonImageModel>? images,
+    List<GroupModel>? group,
     bool? isArchived,
     bool? isDeleted,
     bool? isPublic,
@@ -78,13 +98,14 @@ class PersonModel {
       alias: alias ?? this.alias,
       mother: mother ?? this.mother,
       motherWords: motherWords ?? this.motherWords,
-      note: note ?? this.note,
+      mark: mark ?? this.mark,
       history: history ?? this.history,
       photo: photo ?? this.photo,
       cpf: cpf ?? this.cpf,
       birthday: birthday ?? this.birthday,
       laws: laws ?? this.laws,
       images: images ?? this.images,
+      group: group ?? this.group,
       isArchived: isArchived ?? this.isArchived,
       isDeleted: isDeleted ?? this.isDeleted,
       isPublic: isPublic ?? this.isPublic,
@@ -114,8 +135,8 @@ class PersonModel {
     if (motherWords != null) {
       result.addAll({'motherWords': motherWords});
     }
-    if (note != null) {
-      result.addAll({'note': note});
+    if (mark != null) {
+      result.addAll({'mark': mark});
     }
     if (history != null) {
       result.addAll({'history': history});
@@ -135,6 +156,9 @@ class PersonModel {
     if (images != null) {
       result.addAll({'images': images!.map((x) => x.toMap()).toList()});
     }
+    if (group != null) {
+      result.addAll({'group': group!.map((x) => x.toMap()).toList()});
+    }
     result.addAll({'isArchived': isArchived});
     result.addAll({'isDeleted': isDeleted});
     result.addAll({'isPublic': isPublic});
@@ -152,7 +176,7 @@ class PersonModel {
       alias: List<String>.from(map['alias']),
       mother: map['mother'],
       motherWords: List<String>.from(map['motherWords']),
-      note: map['note'],
+      mark: map['mark'],
       history: map['history'],
       photo: map['photo'],
       cpf: map['cpf'],
@@ -165,6 +189,10 @@ class PersonModel {
       images: map['images'] != null
           ? List<PersonImageModel>.from(
               map['images']?.map((x) => PersonImageModel.fromMap(x)))
+          : null,
+      group: map['group'] != null
+          ? List<GroupModel>.from(
+              map['group']?.map((x) => GroupModel.fromMap(x)))
           : null,
       isArchived: map['isArchived'] ?? false,
       isDeleted: map['isDeleted'] ?? false,
@@ -179,7 +207,7 @@ class PersonModel {
 
   @override
   String toString() {
-    return 'PersonModel(id: $id, user: $user, isMale: $isMale, name: $name, nameWords: $nameWords, alias: $alias, mother: $mother, motherWords: $motherWords, note: $note, history: $history, photo: $photo, cpf: $cpf, birthday: $birthday, laws: $laws, images: $images, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic)';
+    return 'PersonModel(id: $id, user: $user, isMale: $isMale, name: $name, nameWords: $nameWords, alias: $alias, mother: $mother, motherWords: $motherWords, mark: $mark, history: $history, photo: $photo, cpf: $cpf, birthday: $birthday, laws: $laws, images: $images, group: $group, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic)';
   }
 
   @override
@@ -195,13 +223,14 @@ class PersonModel {
         listEquals(other.alias, alias) &&
         other.mother == mother &&
         listEquals(other.motherWords, motherWords) &&
-        other.note == note &&
+        other.mark == mark &&
         other.history == history &&
         other.photo == photo &&
         other.cpf == cpf &&
         other.birthday == birthday &&
         listEquals(other.laws, laws) &&
         listEquals(other.images, images) &&
+        listEquals(other.group, group) &&
         other.isArchived == isArchived &&
         other.isDeleted == isDeleted &&
         other.isPublic == isPublic;
@@ -217,13 +246,14 @@ class PersonModel {
         alias.hashCode ^
         mother.hashCode ^
         motherWords.hashCode ^
-        note.hashCode ^
+        mark.hashCode ^
         history.hashCode ^
         photo.hashCode ^
         cpf.hashCode ^
         birthday.hashCode ^
         laws.hashCode ^
         images.hashCode ^
+        group.hashCode ^
         isArchived.hashCode ^
         isDeleted.hashCode ^
         isPublic.hashCode;

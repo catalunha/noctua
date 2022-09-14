@@ -4,6 +4,7 @@ import 'package:noctua/app/view/controllers/auth/login/login_dependencies.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_dependencies.dart';
 import 'package:noctua/app/view/controllers/home/home_dependencies.dart';
 import 'package:noctua/app/view/controllers/person/person_dependencies.dart';
+import 'package:noctua/app/view/controllers/person/search/people_search_dependencies.dart';
 import 'package:noctua/app/view/controllers/user/profile/user_profile_dependencies.dart';
 import 'package:noctua/app/view/pages/auth/login/auth_login_page.dart';
 import 'package:noctua/app/view/pages/auth/register/email/auth_register_email.page.dart';
@@ -13,6 +14,8 @@ import 'package:noctua/app/view/pages/person/person_addedit_image.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_law.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_page.dart';
 import 'package:noctua/app/view/pages/person/person_data.dart';
+import 'package:noctua/app/view/pages/person/person_search_page.dart';
+import 'package:noctua/app/view/pages/person/person_search_result_page.dart';
 import 'package:noctua/app/view/pages/user/profile/user_profile_page.dart';
 
 class Routes {
@@ -28,6 +31,8 @@ class Routes {
   static const personAddEditImage = '/person/addedit/image';
   static const personAddEditLaw = '/person/addedit/law';
   static const personData = '/person/data';
+  static const personSearch = '/person/search';
+  static const personSearchResult = '/person/search/result';
 
   static final pageList = [
     GetPage(
@@ -74,6 +79,15 @@ class Routes {
     GetPage(
       name: Routes.personAddEditLaw,
       page: () => PersonAddEditLaw(),
+    ),
+    GetPage(
+      name: Routes.personSearch,
+      binding: PersonSearchDependencies(),
+      page: () => PersonSearchPage(),
+    ),
+    GetPage(
+      name: Routes.personSearchResult,
+      page: () => PersonSearchResultPage(),
     ),
   ];
 }
