@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:noctua/app/view/controllers/person/search/people_search_controller.dart';
-import 'package:noctua/app/view/pages/person/parts/calendar_button.dart';
+import 'package:noctua/app/view/pages/person/parts/calendar2_button.dart';
 import 'package:noctua/app/view/pages/utils/app_icon.dart';
 import 'package:noctua/app/view/pages/utils/app_textformfield.dart';
 
@@ -315,7 +315,7 @@ class _SearchPageState extends State<PersonSearchPage> {
                             });
                           },
                         ),
-                        CalendarButton(),
+                        Calendar2Button(),
                       ],
                     ),
                   ],

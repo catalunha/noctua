@@ -7,14 +7,13 @@ import 'package:noctua/app/data/repositories/person_repository.dart';
 import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
-import 'package:noctua/app/domain/usecases/person/person_filter.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class PersonRepositoryB4a extends GetxService implements PersonRepository {
   Future<QueryBuilder<ParseObject>> getQueryAll(
-      PersonFilter personFilter) async {
-    QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+      QueryBuilder<ParseObject> query) async {
+    // QueryBuilder<ParseObject> query =
+    //     QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
     // final user = await ParseUser.currentUser() as ParseUser;
     // query.whereEqualTo('isMale', true);
     // query.
@@ -48,12 +47,12 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   // }
 
   @override
-  Future<List<PersonModel>> list(PersonFilter personFilter) async {
-    QueryBuilder<ParseObject> query;
+  Future<List<PersonModel>> list(QueryBuilder<ParseObject> query) async {
+    // QueryBuilder<ParseObject> query;
     // if (queryType == GetQueryFilterPerson.archived) {
     // query = await getQueryArchived();
     // } else {
-    query = await getQueryAll(personFilter);
+    query = await getQueryAll(query);
     // }
 
     final ParseResponse response = await query.query();

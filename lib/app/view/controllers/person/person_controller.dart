@@ -9,7 +9,6 @@ import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/domain/models/user_model.dart';
 import 'package:noctua/app/domain/usecases/law/law_usecase.dart';
-import 'package:noctua/app/domain/usecases/person/person_filter.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
 import 'package:noctua/app/domain/usecases/person_image/person_image_usecase.dart';
 import 'package:noctua/app/domain/utils/xfile_to_parsefile.dart';
@@ -17,6 +16,7 @@ import 'package:noctua/app/routes.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_controller.dart';
 import 'package:noctua/app/view/controllers/utils/loader_mixin.dart';
 import 'package:noctua/app/view/controllers/utils/message_mixin.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final PersonUseCase _personUseCase;
@@ -64,8 +64,9 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   Future<void> listAll() async {
     _loading(true);
     _personList.clear();
-    PersonFilter personFilter = PersonFilter();
-    List<PersonModel> temp = await _personUseCase.list(personFilter);
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+    List<PersonModel> temp = await _personUseCase.list(query);
     _personList(temp);
     _loading(false);
   }

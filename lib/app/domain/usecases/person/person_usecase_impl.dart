@@ -2,8 +2,8 @@ import 'package:noctua/app/data/repositories/person_repository.dart';
 import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
-import 'package:noctua/app/domain/usecases/person/person_filter.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class PersonUseCaseImpl implements PersonUseCase {
   final PersonRepository _repository;
@@ -15,8 +15,8 @@ class PersonUseCaseImpl implements PersonUseCase {
   // Future<void> delete(String id) async => await _repository.delete(id);
 
   @override
-  Future<List<PersonModel>> list(PersonFilter personFilter) async =>
-      await _repository.list(personFilter);
+  Future<List<PersonModel>> list(QueryBuilder<ParseObject> query) async =>
+      await _repository.list(query);
 
   // @override
   // Future<void> isArchive(String id, bool mode) async =>

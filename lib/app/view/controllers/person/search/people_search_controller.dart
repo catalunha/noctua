@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
+import 'package:noctua/app/data/b4a/entity/person_entity.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
-import 'package:noctua/app/domain/usecases/person/person_filter.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
 import 'package:noctua/app/routes.dart';
 import 'package:noctua/app/view/controllers/utils/loader_mixin.dart';
 import 'package:noctua/app/view/controllers/utils/message_mixin.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class PersonSearchController extends GetxController
     with LoaderMixin, MessageMixin {
@@ -66,45 +67,49 @@ class PersonSearchController extends GetxController
   }) async {
     _loading(true);
     personList.clear();
-    PersonFilter personFilter = PersonFilter();
-    List<PersonModel> temp = await _personUseCase.list(personFilter);
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
     if (aliasContainsBool) {
-      // a = a.aliasElementContains(aliasContainsString);
+      query.whereContains('alias', aliasContainsString);
     }
     if (aliasEqualToBool) {
-      // a = a.aliasElementEqualTo(aliasContainsString);
+      query.whereContainedIn('alias', [aliasContainsString]);
     }
     if (nameContainsBool) {
-      // a = a.nameContains(nameContainsString);
+      query.whereContains('name', nameContainsString);
     }
     if (nameEqualToBool) {
-      // a = a.nameEqualTo(nameEqualToString);
+      query.whereEqualTo('name', nameEqualToString);
     }
     if (cpfContainsBool) {
-      // a = a.cpfContains(cpfContainsString);
+      query.whereContains('cpf', cpfContainsString);
     }
     if (cpfEqualToBool) {
-      // a = a.cpfEqualTo(cpfEqualToString);
+      query.whereEqualTo('cpf', cpfEqualToString);
     }
     if (motherContainsBool) {
-      // a = a.motherContains(motherContainsString);
+      query.whereContains('mother', motherContainsString);
     }
     if (motherEqualToBool) {
-      // a = a.motherEqualTo(motherEqualToString);
+      query.whereEqualTo('mother', motherEqualToString);
     }
 
     if (markContainsBool) {
-      // a = a.marksContains(markContainsString);
+      query.whereContains('mark', markContainsString);
     }
     if (markContains2Bool) {
-      // a = a.marksContains(markContains2String);
+      query.whereContains('mark', markContains2String);
     }
     if (markContains3Bool) {
-      // a = a.marksContains(markContains3String);
+      query.whereContains('mark', markContains3String);
     }
     if (birthdayBool) {
-      // a = a.birthdayEqualTo(selectedDate);
+      selectedDate = selectedDate!.subtract(const Duration(hours: 3));
+      query.whereEqualTo('birthday', selectedDate);
+      selectedDate = selectedDate!.add(const Duration(hours: 3));
     }
+    List<PersonModel> temp = await _personUseCase.list(query);
+
     personList.addAll([...temp]);
     _loading(false);
     Get.toNamed(Routes.personSearchResult);
