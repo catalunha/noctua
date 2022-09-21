@@ -46,6 +46,10 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () => Get.toNamed(Routes.personSearch),
                 icon: const Icon(Icons.search),
               ),
+              IconButton(
+                onPressed: () => Get.toNamed(Routes.operation),
+                icon: const Icon(Icons.lock_open_rounded),
+              ),
             ],
           ),
           Expanded(child: SingleChildScrollView(child: PersonList())),

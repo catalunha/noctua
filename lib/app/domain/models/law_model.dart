@@ -3,26 +3,30 @@ import 'dart:convert';
 
 class LawModel {
   final String? id;
+  final String book;
   final String name;
-  final String? note;
+  final String? description;
   final bool? isDeleted;
   LawModel({
     this.id,
+    required this.book,
     required this.name,
-    this.note,
+    this.description,
     this.isDeleted,
   });
 
   LawModel copyWith({
     String? id,
+    String? book,
     String? name,
-    String? note,
+    String? description,
     bool? isDeleted,
   }) {
     return LawModel(
       id: id ?? this.id,
+      book: book ?? this.book,
       name: name ?? this.name,
-      note: note ?? this.note,
+      description: description ?? this.description,
       isDeleted: isDeleted ?? this.isDeleted,
     );
   }
@@ -33,9 +37,10 @@ class LawModel {
     if (id != null) {
       result.addAll({'id': id});
     }
+    result.addAll({'book': book});
     result.addAll({'name': name});
-    if (note != null) {
-      result.addAll({'note': note});
+    if (description != null) {
+      result.addAll({'description': description});
     }
     if (isDeleted != null) {
       result.addAll({'isDeleted': isDeleted});
@@ -47,8 +52,9 @@ class LawModel {
   factory LawModel.fromMap(Map<String, dynamic> map) {
     return LawModel(
       id: map['id'],
+      book: map['book'] ?? '',
       name: map['name'] ?? '',
-      note: map['note'],
+      description: map['description'],
       isDeleted: map['isDeleted'],
     );
   }
@@ -60,7 +66,7 @@ class LawModel {
 
   @override
   String toString() {
-    return 'LawModel(id: $id, name: $name, note: $note, isDeleted: $isDeleted)';
+    return 'LawModel(id: $id, book: $book, name: $name, description: $description, isDeleted: $isDeleted)';
   }
 
   @override
@@ -69,13 +75,18 @@ class LawModel {
 
     return other is LawModel &&
         other.id == id &&
+        other.book == book &&
         other.name == name &&
-        other.note == note &&
+        other.description == description &&
         other.isDeleted == isDeleted;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ name.hashCode ^ note.hashCode ^ isDeleted.hashCode;
+    return id.hashCode ^
+        book.hashCode ^
+        name.hashCode ^
+        description.hashCode ^
+        isDeleted.hashCode;
   }
 }

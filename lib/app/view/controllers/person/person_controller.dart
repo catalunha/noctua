@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:noctua/app/data/b4a/entity/person_entity.dart';
 import 'package:noctua/app/data/b4a/entity/person_image_entity.dart';
@@ -46,7 +47,15 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final _person = Rxn<PersonModel>();
   PersonModel? get person => _person.value;
 
-  XFile? xfile;
+  XFile? pickedXFile;
+  setPickedXFile(XFile? value) {
+    pickedXFile = value;
+  }
+
+  CroppedFile? croppedFile;
+  setCroppedFile(CroppedFile? value) {
+    croppedFile = value;
+  }
 
   final Rxn<DateTime> _selectedDate = Rxn<DateTime>();
   DateTime? get selectedDate => _selectedDate.value;
@@ -81,7 +90,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
 
   void add() {
     _person.value = null;
-    xfile = null;
+    pickedXFile = null;
+    croppedFile = null;
     onSelectedDate();
     Get.toNamed(Routes.personAddEdit);
   }
@@ -90,13 +100,14 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     var phraseTemp = _personList.firstWhere((element) => element.id == id);
     _person(phraseTemp);
     onSelectedDate();
-    xfile = null;
+    pickedXFile = null;
+    croppedFile = null;
 
     Get.toNamed(Routes.personAddEdit);
   }
 
   Future<void> addedit({
-    bool isMale = true,
+    bool isFemale = true,
     String name = '',
     String cpf = '',
     String alias = '',
@@ -131,14 +142,12 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       PersonModel model = PersonModel(
         id: modelId,
         user: userModel,
-        isMale: isMale,
+        isFemale: isFemale,
         name: name,
-        nameWords: PersonModel.onTextWords(name),
         cpf: cpf,
         birthday: selectedDate,
         alias: PersonModel.onTextSplit(alias),
         mother: mother,
-        motherWords: PersonModel.onTextWords(mother),
         history: history,
         mark: mark,
         isArchived: isArchived,
@@ -146,18 +155,31 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         isDeleted: isDeleted,
       );
       String personId = await _personUseCase.addEdit(model);
-      if (xfile != null) {
+
+      if (croppedFile != null) {
         photo = await XFileToParseFile.xFileToParseFile(
-          xfile: xfile!,
+          nameOfFile: pickedXFile!.name,
+          pathOfFile: croppedFile!.path,
+          fileInListOfBytes: await croppedFile!.readAsBytes(),
+          className: PersonEntity.className,
+          objectId: personId,
+          objectAttribute: 'photo',
+        );
+      } else if (pickedXFile != null) {
+        photo = await XFileToParseFile.xFileToParseFile(
+          nameOfFile: pickedXFile!.name,
+          pathOfFile: pickedXFile!.path,
+          fileInListOfBytes: await pickedXFile!.readAsBytes(),
           className: PersonEntity.className,
           objectId: personId,
           objectAttribute: 'photo',
         );
       }
-      xfile = null;
+      pickedXFile = null;
+      croppedFile = null;
       PersonModel modelFinal = model.copyWith(id: personId, photo: photo);
       int index = _personList.indexWhere((e) => e.id == personId);
-      _personList.fillRange(index, index + 1, modelFinal);
+      if (index >= 0) _personList.fillRange(index, index + 1, modelFinal);
     } on PersonRepositoryException {
       _message.value = MessageModel(
         title: 'Erro em Repository',
@@ -247,7 +269,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   void addDeleteImage(String id) async {
     var phraseTemp = _personList.firstWhere((element) => element.id == id);
     _person(phraseTemp);
-    xfile = null;
+    pickedXFile = null;
+    croppedFile = null;
     List<PersonImageModel> images = await _personUseCase.readRelationImages(id);
     personImageList(images);
     Get.toNamed(Routes.personAddEditImage);
@@ -258,18 +281,40 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   }) async {
     try {
       _loading(true);
-      if (xfile != null) {
+      if (pickedXFile != null) {
         PersonImageModel personImageModel = PersonImageModel(
           person: person!,
         );
         String personImageId = await _personImageUseCase.add(personImageModel);
-        String? personImageIdUrl = await XFileToParseFile.xFileToParseFile(
-          xfile: xfile!,
-          className: PersonImageEntity.className,
-          objectId: personImageId,
-          objectAttribute: 'photo',
-        );
-        xfile = null;
+        String? personImageIdUrl;
+        if (croppedFile != null) {
+          personImageIdUrl = await XFileToParseFile.xFileToParseFile(
+            nameOfFile: pickedXFile!.name,
+            pathOfFile: croppedFile!.path,
+            fileInListOfBytes: await croppedFile!.readAsBytes(),
+            className: PersonImageEntity.className,
+            objectId: personImageId,
+            objectAttribute: 'photo',
+          );
+        } else if (pickedXFile != null) {
+          personImageIdUrl = await XFileToParseFile.xFileToParseFile(
+            nameOfFile: pickedXFile!.name,
+            pathOfFile: pickedXFile!.path,
+            fileInListOfBytes: await pickedXFile!.readAsBytes(),
+            className: PersonImageEntity.className,
+            objectId: personImageId,
+            objectAttribute: 'photo',
+          );
+        }
+
+        // String? personImageIdUrl = await XFileToParseFile.xFileToParseFile(
+        //   xfile: pickedXFile!,
+        //   className: PersonImageEntity.className,
+        //   objectId: personImageId,
+        //   objectAttribute: 'photo',
+        // );
+        pickedXFile = null;
+        croppedFile = null;
         personImageModel = personImageModel.copyWith(
           id: personImageId,
           photo: personImageIdUrl,

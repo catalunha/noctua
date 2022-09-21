@@ -54,7 +54,7 @@ class _PersonAddEditLawState extends State<PersonAddEditLaw> {
           ? Colors.blueAccent
           : null,
       title: Text(law.name),
-      subtitle: Text(law.note ?? "..."),
+      subtitle: Text(law.description ?? "..."),
       trailing: IconButton(
         onPressed: () {
           widget._personController.onUpdateLawIdSelectedList(law.id!);

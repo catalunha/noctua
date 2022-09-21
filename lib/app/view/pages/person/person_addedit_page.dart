@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:noctua/app/view/controllers/person/person_controller.dart';
 import 'package:noctua/app/view/pages/person/parts/calendar_button.dart';
-import 'package:noctua/app/view/pages/person/parts/person_photo.dart';
+import 'package:noctua/app/view/pages/person/parts/image_view_add.dart';
 import 'package:noctua/app/view/pages/utils/app_icon.dart';
 import 'package:noctua/app/view/pages/utils/app_textformfield.dart';
 import 'package:validatorless/validatorless.dart';
@@ -39,7 +39,7 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
     _motherTEC.text = widget._personController.person?.mother ?? '';
     _aliasTEC.text = widget._personController.person?.alias?.join(', ') ?? '';
     _markTEC.text = widget._personController.person?.mark ?? '';
-    _isMale = widget._personController.person?.isMale ?? true;
+    _isMale = widget._personController.person?.isFemale ?? true;
     _isArchived = widget._personController.person?.isArchived ?? false;
     _isPublic = widget._personController.person?.isPublic ?? false;
     _isDeleted = widget._personController.person?.isDeleted ?? false;
@@ -88,24 +88,57 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
                   controller: _historyTEC,
                   maxLines: 5,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                        child: PersonPhoto(
-                            photo: widget._personController.person?.photo)),
-                    Expanded(
-                      child: CheckboxListTile(
-                        title: const Text("É homem ?"),
-                        onChanged: (value) {
-                          setState(() {
-                            _isMale = value!;
-                          });
-                        },
-                        value: _isMale,
-                      ),
-                    ),
-                  ],
+                // Row(
+                //   children: [
+                // PersonPhoto(photo: widget._personController.person?.photo),
+                ImageViewAdd(
+                  pickedXFile: widget._personController.pickedXFile,
+                  croppedFile: widget._personController.croppedFile,
+                  photoActual: widget._personController.person?.photo,
+                  setPickedXFile: (value) {
+                    widget._personController.setPickedXFile(value);
+                    setState(() {});
+                  },
+                  setCroppedFile: (value) {
+                    widget._personController.setCroppedFile(value);
+                    setState(() {});
+                  },
                 ),
+                // ViewPhoto(
+                //   pickedFile: widget._personController.pickedXFile,
+                //   croppedFile: widget._personController.croppedFile,
+                //   photoActual: widget._personController.person?.photo,
+                // ),
+                // IconButton(
+                //   icon: const Icon(Icons.image),
+                //   onPressed: () async {
+                //     // Get.toNamed(Routes.personAddPhoto);
+                //     await Get.to(
+                //       () => ImageGetCrop(
+                //         pickedFile: widget._personController.pickedXFile,
+                //         croppedFile: widget._personController.croppedFile,
+                //         setPickedXFile: (value) =>
+                //             widget._personController.setPickedXFile(value),
+                //         setCroppedFile: (value) {
+                //           widget._personController.setCroppedFile(value);
+                //         },
+                //       ),
+                //     );
+                //     // print(widget._personController.pickedXFile!.path);
+                //     setState(() {});
+                //   },
+                // ),
+                CheckboxListTile(
+                  title: const Text("É homem ?"),
+                  onChanged: (value) {
+                    setState(() {
+                      _isMale = value!;
+                    });
+                  },
+                  value: _isMale,
+                ),
+                //   ],
+                // ),
                 const SizedBox(
                   height: 5,
                 ),
@@ -151,7 +184,7 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
           final formValid = _formKey.currentState?.validate() ?? false;
           if (formValid) {
             await widget._personController.addedit(
-              isMale: _isMale,
+              isFemale: _isMale,
               name: _nameTEC.text,
               cpf: _cpfTEC.text,
               alias: _aliasTEC.text,

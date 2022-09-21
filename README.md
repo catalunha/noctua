@@ -62,3 +62,7 @@ extension DateTimeExtension on DateTime? {
 # mocks
 https://jsonplaceholder.typicode.com/photos
 https://www.mockaroo.com/
+
+
+# Operações
+

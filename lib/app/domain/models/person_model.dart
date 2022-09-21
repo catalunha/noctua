@@ -12,26 +12,26 @@ import 'package:noctua/app/domain/models/user_model.dart';
 class PersonModel {
   final String? id;
   final UserModel user;
-  final bool isMale;
+  final bool isFemale;
   final String? name;
-  final List<String>? nameWords;
   final List<String>? alias;
   final String? mother;
-  final List<String>? motherWords;
   final String? photo;
   final String? mark;
   final String? history;
   final String? cpf;
   final DateTime? birthday;
+  final DateTime? contactVisual;
   final List<LawModel>? laws;
-  final List<PersonImageModel>? images;
   final List<GroupModel>? group;
+  final List<PersonImageModel>? images;
 
   final bool isArchived;
   final bool isDeleted;
   final bool isPublic;
 
   List<int>? photoByte;
+  bool? isSelected;
 
   static List<String>? onTextWords(String text) {
     List<String>? textWords =
@@ -49,17 +49,16 @@ class PersonModel {
   PersonModel({
     this.id,
     required this.user,
-    this.isMale = true,
+    this.isFemale = false,
     this.name,
-    this.nameWords,
     this.alias,
     this.mother,
-    this.motherWords,
+    this.photo,
     this.mark,
     this.history,
-    this.photo,
     this.cpf,
     this.birthday,
+    this.contactVisual,
     this.laws,
     this.images,
     this.group,
@@ -71,38 +70,37 @@ class PersonModel {
   PersonModel copyWith({
     String? id,
     UserModel? user,
-    bool? isMale,
+    bool? isFemale,
     String? name,
-    List<String>? nameWords,
     List<String>? alias,
     String? mother,
-    List<String>? motherWords,
+    String? photo,
     String? mark,
     String? history,
-    String? photo,
     String? cpf,
     DateTime? birthday,
+    DateTime? contactVisual,
     List<LawModel>? laws,
     List<PersonImageModel>? images,
     List<GroupModel>? group,
     bool? isArchived,
     bool? isDeleted,
     bool? isPublic,
+    List<int>? photoByte,
   }) {
     return PersonModel(
       id: id ?? this.id,
       user: user ?? this.user,
-      isMale: isMale ?? this.isMale,
+      isFemale: isFemale ?? this.isFemale,
       name: name ?? this.name,
-      nameWords: nameWords ?? this.nameWords,
       alias: alias ?? this.alias,
       mother: mother ?? this.mother,
-      motherWords: motherWords ?? this.motherWords,
+      photo: photo ?? this.photo,
       mark: mark ?? this.mark,
       history: history ?? this.history,
-      photo: photo ?? this.photo,
       cpf: cpf ?? this.cpf,
       birthday: birthday ?? this.birthday,
+      contactVisual: contactVisual ?? this.contactVisual,
       laws: laws ?? this.laws,
       images: images ?? this.images,
       group: group ?? this.group,
@@ -119,12 +117,9 @@ class PersonModel {
       result.addAll({'id': id});
     }
     result.addAll({'user': user.toMap()});
-    result.addAll({'isMale': isMale});
+    result.addAll({'isFemale': isFemale});
     if (name != null) {
       result.addAll({'name': name});
-    }
-    if (nameWords != null) {
-      result.addAll({'nameWords': nameWords});
     }
     if (alias != null) {
       result.addAll({'alias': alias});
@@ -132,8 +127,8 @@ class PersonModel {
     if (mother != null) {
       result.addAll({'mother': mother});
     }
-    if (motherWords != null) {
-      result.addAll({'motherWords': motherWords});
+    if (photo != null) {
+      result.addAll({'photo': photo});
     }
     if (mark != null) {
       result.addAll({'mark': mark});
@@ -141,14 +136,14 @@ class PersonModel {
     if (history != null) {
       result.addAll({'history': history});
     }
-    if (photo != null) {
-      result.addAll({'photo': photo});
-    }
     if (cpf != null) {
       result.addAll({'cpf': cpf});
     }
     if (birthday != null) {
       result.addAll({'birthday': birthday!.millisecondsSinceEpoch});
+    }
+    if (contactVisual != null) {
+      result.addAll({'contactVisual': contactVisual!.millisecondsSinceEpoch});
     }
     if (laws != null) {
       result.addAll({'laws': laws!.map((x) => x.toMap()).toList()});
@@ -162,6 +157,9 @@ class PersonModel {
     result.addAll({'isArchived': isArchived});
     result.addAll({'isDeleted': isDeleted});
     result.addAll({'isPublic': isPublic});
+    if (photoByte != null) {
+      result.addAll({'photoByte': photoByte});
+    }
 
     return result;
   }
@@ -170,18 +168,19 @@ class PersonModel {
     return PersonModel(
       id: map['id'],
       user: UserModel.fromMap(map['user']),
-      isMale: map['isMale'] ?? false,
+      isFemale: map['isFemale'] ?? false,
       name: map['name'],
-      nameWords: List<String>.from(map['nameWords']),
       alias: List<String>.from(map['alias']),
       mother: map['mother'],
-      motherWords: List<String>.from(map['motherWords']),
+      photo: map['photo'],
       mark: map['mark'],
       history: map['history'],
-      photo: map['photo'],
       cpf: map['cpf'],
       birthday: map['birthday'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['birthday'])
+          : null,
+      contactVisual: map['contactVisual'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['contactVisual'])
           : null,
       laws: map['laws'] != null
           ? List<LawModel>.from(map['laws']?.map((x) => LawModel.fromMap(x)))
@@ -207,7 +206,7 @@ class PersonModel {
 
   @override
   String toString() {
-    return 'PersonModel(id: $id, user: $user, isMale: $isMale, name: $name, nameWords: $nameWords, alias: $alias, mother: $mother, motherWords: $motherWords, mark: $mark, history: $history, photo: $photo, cpf: $cpf, birthday: $birthday, laws: $laws, images: $images, group: $group, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic)';
+    return 'PersonModel(id: $id, user: $user, isFemale: $isFemale, name: $name, alias: $alias, mother: $mother, photo: $photo, mark: $mark, history: $history, cpf: $cpf, birthday: $birthday, contactVisual: $contactVisual, laws: $laws, images: $images, group: $group, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic, photoByte: $photoByte)';
   }
 
   @override
@@ -217,46 +216,46 @@ class PersonModel {
     return other is PersonModel &&
         other.id == id &&
         other.user == user &&
-        other.isMale == isMale &&
+        other.isFemale == isFemale &&
         other.name == name &&
-        listEquals(other.nameWords, nameWords) &&
         listEquals(other.alias, alias) &&
         other.mother == mother &&
-        listEquals(other.motherWords, motherWords) &&
+        other.photo == photo &&
         other.mark == mark &&
         other.history == history &&
-        other.photo == photo &&
         other.cpf == cpf &&
         other.birthday == birthday &&
+        other.contactVisual == contactVisual &&
         listEquals(other.laws, laws) &&
         listEquals(other.images, images) &&
         listEquals(other.group, group) &&
         other.isArchived == isArchived &&
         other.isDeleted == isDeleted &&
-        other.isPublic == isPublic;
+        other.isPublic == isPublic &&
+        listEquals(other.photoByte, photoByte);
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
         user.hashCode ^
-        isMale.hashCode ^
+        isFemale.hashCode ^
         name.hashCode ^
-        nameWords.hashCode ^
         alias.hashCode ^
         mother.hashCode ^
-        motherWords.hashCode ^
+        photo.hashCode ^
         mark.hashCode ^
         history.hashCode ^
-        photo.hashCode ^
         cpf.hashCode ^
         birthday.hashCode ^
+        contactVisual.hashCode ^
         laws.hashCode ^
         images.hashCode ^
         group.hashCode ^
         isArchived.hashCode ^
         isDeleted.hashCode ^
-        isPublic.hashCode;
+        isPublic.hashCode ^
+        photoByte.hashCode;
   }
 
   String toJson() => json.encode(toMap());

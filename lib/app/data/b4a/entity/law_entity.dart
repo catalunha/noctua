@@ -8,8 +8,9 @@ class LawEntity {
 
     LawModel model = LawModel(
       id: parseObject.objectId!,
+      book: parseObject.get<String>('book') ?? "...",
       name: parseObject.get<String>('name') ?? "...",
-      note: parseObject.get<String>('note'),
+      description: parseObject.get<String>('description'),
     );
     return model;
   }
@@ -19,8 +20,9 @@ class LawEntity {
     if (model.id != null) {
       parseObject.objectId = model.id;
     }
+    parseObject.set('description', model.description);
     parseObject.set('name', model.name);
-    parseObject.set('note', model.note);
+    parseObject.set('description', model.description);
     return parseObject;
   }
 }

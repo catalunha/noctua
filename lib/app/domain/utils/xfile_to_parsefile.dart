@@ -1,27 +1,29 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class XFileToParseFile {
   static Future<String?> xFileToParseFile(
-      {required XFile xfile,
+      {required String nameOfFile,
+      String? pathOfFile,
+      Uint8List? fileInListOfBytes,
+      // required XFile xfile,
       required String className,
       required String objectId,
       required String objectAttribute}) async {
     try {
-      String fileName = xfile.name;
-      fileName = fileName.replaceAll(RegExp(r'[^A-Za-z0-9]'), '_');
+      // String fileName = xfile.name;
+      String fileName = nameOfFile.replaceAll(RegExp(r'[^A-Za-z0-9]'), '_');
       ParseFileBase? parseFile;
       // //print('===> fileName: $fileName');
       if (kIsWeb) {
         //Flutter Web
-        parseFile = ParseWebFile(await xfile.readAsBytes(),
+        parseFile = ParseWebFile(fileInListOfBytes,
             name: fileName); //Name for file is required
       } else {
         //Flutter Mobile/Desktop
-        parseFile = ParseFile(File(xfile.path), name: fileName);
+        parseFile = ParseFile(File(pathOfFile!));
       }
       final ParseResponse responseParseFile = await parseFile.save();
       if (responseParseFile.success && responseParseFile.results != null) {

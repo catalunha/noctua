@@ -1,24 +1,23 @@
 import 'package:get/get.dart';
-import 'package:noctua/app/data/b4a/entity/law_entity.dart';
+import 'package:noctua/app/data/b4a/entity/operation_entity.dart';
 import 'package:noctua/app/data/b4a/entity/person_entity.dart';
-import 'package:noctua/app/data/b4a/entity/person_image_entity.dart';
+import 'package:noctua/app/data/b4a/entity/user_entity.dart';
 import 'package:noctua/app/data/b4a/person/person_repository_exception.dart';
-import 'package:noctua/app/data/repositories/person_repository.dart';
-import 'package:noctua/app/domain/models/person_image_model.dart';
-import 'package:noctua/app/domain/models/law_model.dart';
+import 'package:noctua/app/data/repositories/operation_repository.dart';
+import 'package:noctua/app/domain/models/operation_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
+import 'package:noctua/app/domain/models/user_model.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
-class PersonRepositoryB4a extends GetxService implements PersonRepository {
-  Future<QueryBuilder<ParseObject>> getQueryAll(
-      QueryBuilder<ParseObject> query) async {
-    // QueryBuilder<ParseObject> query =
-    //     QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
-    // final user = await ParseUser.currentUser() as ParseUser;
-    // query.whereEqualTo('isMale', true);
-    // query.
+class OperationRepositoryB4a extends GetxService
+    implements OperationRepository {
+  Future<QueryBuilder<ParseObject>> getQueryAll() async {
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject(OperationEntity.className));
+    final user = await ParseUser.currentUser() as ParseUser;
     query.whereEqualTo('isDeleted', false);
-    query.includeObject(['user', 'user.profile']);
+    query.includeObject(['organizer', 'organizer.profile']);
+
     return query;
   }
 
@@ -47,31 +46,31 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   // }
 
   @override
-  Future<List<PersonModel>> list(QueryBuilder<ParseObject> query) async {
-    // QueryBuilder<ParseObject> query;
+  Future<List<OperationModel>> list() async {
+    QueryBuilder<ParseObject> query;
     // if (queryType == GetQueryFilterPerson.archived) {
     // query = await getQueryArchived();
     // } else {
-    query = await getQueryAll(query);
+    query = await getQueryAll();
     // }
 
     final ParseResponse response = await query.query();
-    List<PersonModel> listTemp = <PersonModel>[];
+    List<OperationModel> listTemp = <OperationModel>[];
     if (response.success && response.results != null) {
       for (var element in response.results!) {
         //print((element as ParseObject).objectId);
-        listTemp.add(PersonEntity().fromParse(element));
+        listTemp.add(OperationEntity().fromParse(element));
       }
       return listTemp;
     } else {
-      //print('Sem Persons...');
+      print('Sem Operations...');
       return [];
     }
   }
 
   @override
-  Future<String> addEdit(PersonModel model) async {
-    final parseObject = await PersonEntity().toParse(model);
+  Future<String> addEdit(OperationModel model) async {
+    final parseObject = await OperationEntity().toParse(model);
     final ParseResponse parseResponse = await parseObject.save();
 
     if (parseResponse.success && parseResponse.results != null) {
@@ -99,42 +98,47 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   // }
 
   @override
-  Future<List<PersonImageModel>> readRelationImages(String personId) async {
+  Future<List<UserModel>> readRelationOperators(String personId) async {
     //+++ get images
-    List<PersonImageModel> images = [];
-    QueryBuilder<ParseObject> queryImages =
-        QueryBuilder<ParseObject>(ParseObject(PersonImageEntity.className));
-    queryImages.whereRelatedTo('images', 'Person', personId);
-    queryImages.includeObject(['person', 'person.user', 'person.user.profile']);
-    final ParseResponse responseImages = await queryImages.query();
-    if (responseImages.success && responseImages.results != null) {
-      images = [
-        ...responseImages.results!
-            .map<PersonImageModel>(
-                (e) => PersonImageEntity().fromParse(e as ParseObject))
+    List<UserModel> users = [];
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject(UserEntity.className));
+    query.whereRelatedTo('operators', 'Operation', personId);
+    // query.includeObject(['operators', 'operators.profile']);
+    query.includeObject(['profile']);
+    print('Query response para: $personId');
+    print('Query: $query');
+    final ParseResponse response = await query.query();
+    if (response.success && response.results != null) {
+      print('response.results: ${response.results!.length}');
+      users = [
+        ...response.results!
+            .map<UserModel>((e) => UserEntity().fromParse(e))
             .toList()
-      ]; // images.addAll(responseImages.results!
+      ];
+      // users.addAll(responseImages.results!
       //     .map<PersonImageModel>(
       //         (e) => PersonImageEntity().fromParse(e as ParseObject))
       //     .toList());
     }
-    //--- get images
-    return images;
+    //--- get users
+    return users;
   }
 
   @override
-  Future<List<LawModel>> readRelationLaws(String personId) async {
+  Future<List<PersonModel>> readRelationInvolveds(String personId) async {
     //+++ get laws
-    // I/flutter (11952):  https://parseapi.back4app.com/classes/Law?where={"$relatedTo":{"object":{"__type":"Pointer","className":"Person","objectId":"jBorq8Ctgp"},"key":"laws"}}
-    List<LawModel> laws = [];
-    QueryBuilder<ParseObject> queryLaws =
-        QueryBuilder<ParseObject>(ParseObject(LawEntity.className));
-    queryLaws.whereRelatedTo('laws', 'Person', personId);
-    final ParseResponse responseLaws = await queryLaws.query();
+    List<PersonModel> laws = [];
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+    query.whereRelatedTo('involveds', 'Person', personId);
+    // query.includeObject(
+    // ['involveds', 'involveds.user', 'operators.user.profile']);
+    final ParseResponse responseLaws = await query.query();
     if (responseLaws.success && responseLaws.results != null) {
       laws = [
         ...responseLaws.results!
-            .map<LawModel>((e) => LawEntity().fromParse(e as ParseObject))
+            .map<PersonModel>((e) => PersonEntity().fromParse(e as ParseObject))
             .toList()
       ];
       // laws.addAll(responseLaws.results!
@@ -145,42 +149,52 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
     return laws;
   }
 
-  @override
-  Future<void> updateRelationImages(
-      String personId, List<PersonImageModel> modelList) async {
-    final parseObject = PersonEntity().toParseUpdateRelationImages(
-        personId: personId, modelList: modelList, add: true);
-    if (parseObject != null) {
-      await parseObject.save();
-    }
-    final parseObject2 = PersonEntity().toParseUpdateRelationImages(
-        personId: personId, modelList: modelList, add: false);
-    if (parseObject2 != null) {
-      await parseObject2.save();
-    }
-  }
-
-  @override
-  Future<void> updateRelationLaws(
-      String personId, List<LawModel> modelList) async {
-    final parseObject = PersonEntity().toParseUpdateRelationLaws(
-        personId: personId, modelList: modelList, add: true);
-
-    if (parseObject != null) {
-      await parseObject.save();
-    }
-    final parseObject2 = PersonEntity().toParseUpdateRelationLaws(
-        personId: personId, modelList: modelList, add: false);
-    if (parseObject2 != null) {
-      await parseObject2.save();
-    }
-  }
-
   // @override
-  // Future<void> delete(String id) async {
-  //   var parseObject = ParseObject(PersonEntity.className)..objectId = id;
-  //   await parseObject.delete();
+  // Future<void> updateRelationOperators(
+  //     String personId, List<UserModel> modelList) async {
+  //   final parseObject = OperationEntity().toParseUpdateRelationOperators(
+  //       personId: personId, modelList: modelList, add: true);
+  //   if (parseObject != null) {
+  //     await parseObject.save();
+  //   }
+  //   final parseObject2 = OperationEntity().toParseUpdateRelationOperators(
+  //       personId: personId, modelList: modelList, add: false);
+  //   if (parseObject2 != null) {
+  //     await parseObject2.save();
+  //   }
   // }
+  @override
+  Future<void> updateRelationOperators(
+      String objectId, List<String> modelIdList, bool add) async {
+    final parseObject = OperationEntity().toParseUpdateRelationOperators(
+        objectId: objectId, modelIdList: modelIdList, add: add);
+    print('parseObject: $parseObject');
+    if (parseObject != null) {
+      await parseObject.save();
+    }
+  }
+
+  @override
+  Future<void> updateRelationInvolved(
+      String personId, List<PersonModel> modelList) async {
+    final parseObject = OperationEntity().toParseUpdateRelationInvolveds(
+        personId: personId, modelList: modelList, add: true);
+
+    if (parseObject != null) {
+      await parseObject.save();
+    }
+    final parseObject2 = OperationEntity().toParseUpdateRelationInvolveds(
+        personId: personId, modelList: modelList, add: false);
+    if (parseObject2 != null) {
+      await parseObject2.save();
+    }
+  }
+
+  @override
+  Future<void> delete(String id) async {
+    var parseObject = ParseObject(OperationEntity.className)..objectId = id;
+    await parseObject.delete();
+  }
 
   // @override
   // Future<void> isArchive(String id, bool mode) async {

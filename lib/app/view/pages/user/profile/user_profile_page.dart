@@ -17,7 +17,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   final _nameTec = TextEditingController();
   // final _descriptionTec = TextEditingController();
   // final _phoneTec = TextEditingController();
-  // final _communityTec = TextEditingController();
+  final _unitTec = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -26,8 +26,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     // _descriptionTec.text =
     //     widget._userProfileController.userProfile?.description ?? "";
     // _phoneTec.text = widget._userProfileController.userProfile?.phone ?? "";
-    // _communityTec.text =
-    //     widget._userProfileController.userProfile?.community ?? "";
+    _unitTec.text = widget._userProfileController.userProfile?.unit ?? "";
   }
 
   @override
@@ -58,10 +57,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 //   label: 'Seu telefone com DDD.',
                 //   controller: _phoneTec,
                 // ),
-                // AppTextFormField(
-                //   label: 'Sua comunidade.',
-                //   controller: _communityTec,
-                // ),
+                AppTextFormField(
+                  label: 'Sua unidade.',
+                  controller: _unitTec,
+                ),
                 // UserProfilePhoto(),
                 const SizedBox(height: 20),
                 ElevatedButton(
@@ -73,7 +72,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         name: _nameTec.text,
                         // description: _descriptionTec.text,
                         // phone: _phoneTec.text,
-                        // community: _communityTec.text,
+                        unit: _unitTec.text,
                       );
                       Get.back();
                     }

@@ -14,8 +14,9 @@ class UserRepositoryB4a extends GetxService implements UserRepository {
   @override
   Future<UserModel?> readByEmail(String email) async {
     QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseUser.forQuery());
+        QueryBuilder<ParseObject>(ParseObject(UserEntity.className));
     query.whereEqualTo('email', email);
+    query.includeObject(['profile']);
     query.first();
     final ParseResponse response;
     try {
@@ -27,10 +28,13 @@ class UserRepositoryB4a extends GetxService implements UserRepository {
     UserModel? temp;
     if (response.success && response.results != null) {
       for (var element in response.results!) {
-        //print((element as ParseObject).objectId);
-        temp = UserEntity().fromParse(element as ParseUser);
+        print('readByEmail:');
+        print((element as ParseObject).objectId);
+        print(element);
+        temp = UserEntity().fromParse(element);
+        print(temp);
       }
-      //print(temp);
+      print(temp);
       return temp;
     } else {
       //print('nao encontrei este User...');

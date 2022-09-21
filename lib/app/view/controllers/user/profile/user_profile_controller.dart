@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:noctua/app/data/b4a/entity/user_profile_entity.dart';
 import 'package:noctua/app/data/b4a/user/profile/user_profile_repository_exception.dart';
@@ -20,9 +21,14 @@ class UserProfileController extends GetxController
   final _userProfile = Rxn<UserProfileModel>();
   UserProfileModel? get userProfile => _userProfile.value;
 
-  XFile? _xfile;
-  set xfile(XFile? xfile) {
-    _xfile = xfile;
+  XFile? pickedXFile;
+  setPickedXFile(XFile value) {
+    pickedXFile = value;
+  }
+
+  CroppedFile? croppedFile;
+  setCroppedFile(CroppedFile value) {
+    croppedFile = value;
   }
 
   @override
@@ -39,7 +45,7 @@ class UserProfileController extends GetxController
     String? name,
     String? description,
     String? phone,
-    String? community,
+    String? unit,
   }) async {
     try {
       _loading(true);
@@ -70,17 +76,36 @@ class UserProfileController extends GetxController
         name: name,
         description: description,
         phone: phone,
-        community: community,
+        unit: unit,
       );
       String userProfileId = await _userProfileUseCase.update(userProfile);
-      if (_xfile != null) {
+      if (croppedFile != null) {
         await XFileToParseFile.xFileToParseFile(
-          xfile: _xfile!,
+          nameOfFile: pickedXFile!.name,
+          pathOfFile: croppedFile!.path,
+          fileInListOfBytes: await croppedFile!.readAsBytes(),
+          className: UserProfileEntity.className,
+          objectId: userProfileId,
+          objectAttribute: 'photo',
+        );
+      } else if (pickedXFile != null) {
+        await XFileToParseFile.xFileToParseFile(
+          nameOfFile: pickedXFile!.name,
+          pathOfFile: pickedXFile!.path,
+          fileInListOfBytes: await pickedXFile!.readAsBytes(),
           className: UserProfileEntity.className,
           objectId: userProfileId,
           objectAttribute: 'photo',
         );
       }
+      // if (_xfile != null) {
+      //   await XFileToParseFile.xFileToParseFile(
+      //     xfile: _xfile!,
+      //     className: UserProfileEntity.className,
+      //     objectId: userProfileId,
+      //     objectAttribute: 'photo',
+      //   );
+      // }
       // }
       SplashController splashController = Get.find();
       await splashController.updateUserProfile();

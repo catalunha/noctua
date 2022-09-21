@@ -3,6 +3,7 @@ import 'package:noctua/app/view/controllers/auth/email/auth_register_email_depen
 import 'package:noctua/app/view/controllers/auth/login/login_dependencies.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_dependencies.dart';
 import 'package:noctua/app/view/controllers/home/home_dependencies.dart';
+import 'package:noctua/app/view/controllers/operation/operation_dependencies.dart';
 import 'package:noctua/app/view/controllers/person/person_dependencies.dart';
 import 'package:noctua/app/view/controllers/person/search/people_search_dependencies.dart';
 import 'package:noctua/app/view/controllers/user/profile/user_profile_dependencies.dart';
@@ -10,6 +11,10 @@ import 'package:noctua/app/view/pages/auth/login/auth_login_page.dart';
 import 'package:noctua/app/view/pages/auth/register/email/auth_register_email.page.dart';
 import 'package:noctua/app/view/pages/auth/splash/splash_page.dart';
 import 'package:noctua/app/view/pages/home/home_page.dart';
+import 'package:noctua/app/view/pages/operation/operation_addedit_operators_page.dart';
+import 'package:noctua/app/view/pages/operation/operation_addedit_page.dart';
+import 'package:noctua/app/view/pages/operation/operation_page.dart';
+import 'package:noctua/app/view/pages/person/parts/image_get_crop.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_image.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_law.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_page.dart';
@@ -30,9 +35,14 @@ class Routes {
   static const personAddEdit = '/person/addedit';
   static const personAddEditImage = '/person/addedit/image';
   static const personAddEditLaw = '/person/addedit/law';
+  static const personAddPhoto = '/person/add/photo';
   static const personData = '/person/data';
   static const personSearch = '/person/search';
   static const personSearchResult = '/person/search/result';
+
+  static const operation = '/operation';
+  static const operationAddEdit = '/operation/addedit';
+  static const operationAddEditOperators = '/operation/addedit/operators';
 
   static final pageList = [
     GetPage(
@@ -88,6 +98,23 @@ class Routes {
     GetPage(
       name: Routes.personSearchResult,
       page: () => PersonSearchResultPage(),
+    ),
+    GetPage(
+      name: Routes.personAddPhoto,
+      page: () => ImageGetCrop(),
+    ),
+    GetPage(
+      name: Routes.operation,
+      binding: OperationDependencies(),
+      page: () => OperationPage(),
+    ),
+    GetPage(
+      name: Routes.operationAddEdit,
+      page: () => OperationAddEditPage(),
+    ),
+    GetPage(
+      name: Routes.operationAddEditOperators,
+      page: () => OperationAddEditOperators(),
     ),
   ];
 }

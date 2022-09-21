@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:noctua/app/view/controllers/person/person_controller.dart';
-import 'package:noctua/app/view/pages/person/parts/person_photo.dart';
+import 'package:noctua/app/view/pages/person/parts/image_view_add.dart';
 import 'package:noctua/app/view/pages/utils/app_theme.dart';
 
 class PersonAddEditImage extends StatefulWidget {
@@ -36,7 +36,44 @@ class _PersonAddEditImageState extends State<PersonAddEditImage> {
                   ...widget._personController.personImageList
                       .map((e) => image(e.id!, e.photo!))
                       .toList(),
-                PersonPhoto(),
+                ImageViewAdd(
+                  pickedXFile: widget._personController.pickedXFile,
+                  croppedFile: widget._personController.croppedFile,
+                  // photoActual: widget._personController.person?.photo,
+                  setPickedXFile: (value) {
+                    widget._personController.setPickedXFile(value);
+                    setState(() {});
+                  },
+                  setCroppedFile: (value) {
+                    widget._personController.setCroppedFile(value);
+                    setState(() {});
+                  },
+                ),
+                // PersonPhoto(),
+                // ViewPhoto(
+                //   pickedFile: widget._personController.pickedXFile,
+                //   croppedFile: widget._personController.croppedFile,
+                //   // photoActual: widget._personController.person?.photo,
+                // ),
+                // IconButton(
+                //   icon: const Icon(Icons.image),
+                //   onPressed: () async {
+                //     // Get.toNamed(Routes.personAddPhoto);
+                //     await Get.to(
+                //       () => AddPhoto(
+                //         pickedFile: widget._personController.pickedXFile,
+                //         croppedFile: widget._personController.croppedFile,
+                //         setPickedXFile: (value) =>
+                //             widget._personController.setPickedXFile(value),
+                //         setCroppedFile: (value) {
+                //           widget._personController.setCroppedFile(value);
+                //         },
+                //       ),
+                //     );
+                //     // print(widget._personController.pickedXFile!.path);
+                //     setState(() {});
+                //   },
+                // ),
                 ElevatedButton(
                     onPressed: () {
                       widget._personController.onAddImage();

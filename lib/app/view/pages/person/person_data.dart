@@ -23,7 +23,7 @@ class PersonData extends StatelessWidget {
             // mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(_personController.person!.isMale ? "Homem" : "Mulher"),
+              Text(_personController.person!.isFemale ? "Homem" : "Mulher"),
               _personController.person!.photo != null &&
                       _personController.person!.photo!.isNotEmpty
                   ? Image.network(
@@ -71,7 +71,7 @@ class PersonData extends StatelessWidget {
                   'Leis (${_personController.person?.laws?.length.toString() ?? ""}):'),
               Text(
                 _personController.person?.laws
-                        ?.map((e) => e.note)
+                        ?.map((e) => e.description)
                         .toList()
                         .join('\n') ??
                     "...",

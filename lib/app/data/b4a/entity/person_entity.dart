@@ -50,7 +50,7 @@ class PersonEntity {
       id: parseObject.objectId!,
       user: UserEntity().fromParse(parseObject.get('user') as ParseUser),
       name: parseObject.get<String>('name'),
-      isMale: parseObject.get<bool>('isMale') ?? true,
+      isFemale: parseObject.get<bool>('isFemale') ?? false,
       alias: parseObject.get<List<dynamic>>('alias') != null
           ? parseObject
               .get<List<dynamic>>('alias')!
@@ -80,13 +80,11 @@ class PersonEntity {
     var currentUser = await ParseUser.currentUser() as ParseUser?;
     parseObject.set('user', currentUser);
     parseObject.set('name', model.name);
-    parseObject.set('nameWords', model.nameWords);
-    parseObject.set('isMale', model.isMale);
+    parseObject.set('isFemale', model.isFemale);
     parseObject.set('alias', model.alias);
     parseObject.set('history', model.history);
     parseObject.set('mark', model.mark);
     parseObject.set('mother', model.mother);
-    parseObject.set('motherWords', model.motherWords);
     parseObject.set('isArchived', model.isArchived);
     parseObject.set('isDeleted', model.isDeleted);
     parseObject.set('isPublic', model.isPublic);
