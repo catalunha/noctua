@@ -2,10 +2,13 @@ import 'package:get/get.dart';
 import 'package:noctua/app/data/b4a/entity/operation_entity.dart';
 import 'package:noctua/app/data/b4a/operation/operation_repository_exception.dart';
 import 'package:noctua/app/data/b4a/user/user/user_repository_exception.dart';
+import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/operation_model.dart';
+import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/domain/models/user_model.dart';
 import 'package:noctua/app/domain/usecases/operation/operation_usecase.dart';
+import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
 import 'package:noctua/app/domain/usecases/user/user/user_usecase.dart';
 import 'package:noctua/app/routes.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_controller.dart';
@@ -17,12 +20,15 @@ class OperationController extends GetxController
     with LoaderMixin, MessageMixin {
   final OperationUsecase _operationUsecase;
   final UserUseCase _userUseCase;
+  final PersonUseCase _personUseCase;
 
   OperationController({
     required OperationUsecase operationUseCase,
     required UserUseCase userUseCase,
+    required PersonUseCase personUseCase,
   })  : _operationUsecase = operationUseCase,
-        _userUseCase = userUseCase;
+        _userUseCase = userUseCase,
+        _personUseCase = personUseCase;
 
   final _loading = false.obs;
   set loading(bool value) => _loading(value);
@@ -121,16 +127,13 @@ class OperationController extends GetxController
     var allOperators = await _operationUsecase.readRelationOperators(id);
     operatorsList.addAll([...allOperators]);
     print('operatorsList: ${operatorsList.length}');
-    Get.toNamed(Routes.operationAddEditOperators);
+    Get.toNamed(Routes.operationOperators);
   }
 
   addOperator({required String email}) async {
     try {
       Get.back();
       _loading(true);
-      UserModel userModel;
-      SplashController splashController = Get.find();
-      userModel = splashController.userModel!;
       print('buscando $email');
       UserModel? person = await _userUseCase.readByEmail(email);
       if (person != null) {
@@ -187,7 +190,91 @@ class OperationController extends GetxController
         isError: true,
       );
     } finally {
+      getOperatorsList(operation!.id!);
       _loading(false);
     }
+  }
+
+  void getInvolvedsList(String id) async {
+    var phraseTemp = operationList.firstWhere((element) => element.id == id);
+    operation = phraseTemp;
+    involvedsList.clear();
+    var all = await _operationUsecase.readRelationInvolveds(id);
+    involvedsList.addAll([...all]);
+    print('involvedsList: ${involvedsList.length}');
+    Get.toNamed(Routes.operationInvolveds);
+  }
+
+  addInvolved({required String id}) async {
+    try {
+      Get.back();
+      _loading(true);
+      print('buscando $id');
+      PersonModel? person = await _personUseCase.read(id);
+      if (person != null) {
+        print('pessoa encontrada ${person.id}');
+        await _operationUsecase.updateRelationInvolveds(
+            operation!.id!, [person.id!], true);
+        // operatorsList.add(person);
+      } else {
+        print('nao achei nenhuma pessoa com este id');
+        throw Exception();
+      }
+    } on UserRepositoryException catch (e) {
+      _loading(false);
+
+      _message.value = MessageModel(
+        title: 'Oops em User',
+        message: e.message,
+        isError: true,
+      );
+    } on OperationRepositoryException catch (e) {
+      _loading(false);
+
+      _message.value = MessageModel(
+        title: 'Oops em operation',
+        message: e.message,
+        isError: true,
+      );
+    } catch (e) {
+      // Get.back();
+      print('catch');
+      _loading(false);
+      print(e);
+      _message.value = MessageModel(
+        title: 'Oops',
+        message: 'Nao achei nenhuma pessoa com este id',
+        isError: true,
+      );
+    } finally {
+      getInvolvedsList(operation!.id!);
+      _loading(false);
+    }
+  }
+
+  deleteInvolved(String personId) async {
+    try {
+      _loading(true);
+      operatorsList.removeWhere((e) => e.id == personId);
+      await _operationUsecase.updateRelationInvolveds(
+          operation!.id!, [personId], false);
+    } catch (e) {
+      _message.value = MessageModel(
+        title: 'Erro',
+        message: 'Não foi possivel apagar este envolvido',
+        isError: true,
+      );
+    } finally {
+      getInvolvedsList(operation!.id!);
+      _loading(false);
+    }
+  }
+
+  void viewPersonData(String id) async {
+    PersonModel? person = await _personUseCase.read(id);
+    List<PersonImageModel> images = await _personUseCase.readRelationImages(id);
+    List<LawModel> laws = await _personUseCase.readRelationLaws(id);
+    var person2 = person!.copyWith(images: images, laws: laws);
+    Get.toNamed(Routes.personData, arguments: person2);
   }
 }

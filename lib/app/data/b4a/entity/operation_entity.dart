@@ -1,7 +1,6 @@
 import 'package:noctua/app/data/b4a/entity/person_entity.dart';
 import 'package:noctua/app/data/b4a/entity/user_entity.dart';
 import 'package:noctua/app/domain/models/operation_model.dart';
-import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class OperationEntity {
@@ -50,9 +49,7 @@ class OperationEntity {
               .map(
                 (element) =>
                     ParseObject(UserEntity.className)..objectId = element,
-                // (element) => ParseObject('_User')..objectId = element,
               )
-              // ParseObject(UserEntity.className)..objectId = element)
               .toList(),
         );
       }
@@ -74,109 +71,97 @@ class OperationEntity {
       return parseObject;
     }
   }
-  // ParseObject? toParseUpdateRelationOperators(
+
+  ParseObject? toParseUpdateRelationInvolveds(
+      {required String objectId,
+      required List<String> modelIdList,
+      required bool add}) {
+    final parseObject = ParseObject(OperationEntity.className);
+    parseObject.objectId = objectId;
+    if (add) {
+      if (modelIdList.isEmpty) {
+        parseObject.unset('involveds');
+      } else {
+        parseObject.addRelation(
+          'involveds',
+          modelIdList
+              .map(
+                (element) =>
+                    ParseObject(PersonEntity.className)..objectId = element,
+              )
+              .toList(),
+        );
+      }
+    } else {
+      if (modelIdList.isEmpty) {
+        parseObject.unset('involveds');
+      } else {
+        parseObject.removeRelation(
+            'involveds',
+            modelIdList
+                .map((element) =>
+                    ParseObject(PersonEntity.className)..objectId = element)
+                .toList());
+      }
+    }
+    if (modelIdList.isEmpty) {
+      return null;
+    } else {
+      return parseObject;
+    }
+  }
+
+  // ParseObject? toParseUpdateRelationInvolveds(
   //     {required String personId,
-  //     required List<UserModel> modelList,
+  //     required List<PersonModel> modelList,
   //     bool add = false}) {
   //   final parseObject = ParseObject(OperationEntity.className);
   //   parseObject.objectId = personId;
   //   List<String> itemList = [];
   //   if (add) {
   //     if (modelList.isEmpty) {
-  //       parseObject.unset('operators');
+  //       parseObject.unset('involveds');
   //     } else {
   //       for (var element in modelList) {
-  //         if (element.profile!.isSelected == true) {
-  //           itemList.add(element.id);
+  //         if (element.isSelected == false) {
+  //           itemList.add(element.id!);
   //         }
   //       }
   //       if (itemList.isNotEmpty) {
   //         parseObject.addRelation(
-  //           'operators',
+  //           'involveds',
   //           itemList
   //               .map((element) =>
-  //                   ParseObject(UserEntity.className)..objectId = element)
+  //                   ParseObject(PersonEntity.className)..objectId = element)
   //               .toList(),
   //         );
   //       }
   //     }
   //   } else {
   //     if (modelList.isEmpty) {
-  //       parseObject.unset('operators');
+  //       parseObject.unset('involveds');
   //     } else {
   //       for (var element in modelList) {
-  //         if (element.profile!.isSelected == false) {
-  //           itemList.add(element.id);
+  //         if (element.isSelected == true) {
+  //           itemList.add(element.id!);
   //         }
   //       }
   //       if (itemList.isNotEmpty) {
   //         parseObject.removeRelation(
-  //             'operators',
-  //             itemList
-  //                 .map((element) =>
-  //                     ParseObject(UserEntity.className)..objectId = element)
-  //                 .toList());
+  //           'involveds',
+  //           itemList
+  //               .map((element) =>
+  //                   ParseObject(PersonEntity.className)..objectId = element)
+  //               .toList(),
+  //         );
   //       }
   //     }
   //   }
+
   //   if (modelList.isNotEmpty && itemList.isEmpty) {
   //     return null;
   //   } else {
   //     return parseObject;
   //   }
   // }
-
-  ParseObject? toParseUpdateRelationInvolveds(
-      {required String personId,
-      required List<PersonModel> modelList,
-      bool add = false}) {
-    final parseObject = ParseObject(OperationEntity.className);
-    parseObject.objectId = personId;
-    List<String> itemList = [];
-    if (add) {
-      if (modelList.isEmpty) {
-        parseObject.unset('involveds');
-      } else {
-        for (var element in modelList) {
-          if (element.isSelected == false) {
-            itemList.add(element.id!);
-          }
-        }
-        if (itemList.isNotEmpty) {
-          parseObject.addRelation(
-            'involveds',
-            itemList
-                .map((element) =>
-                    ParseObject(PersonEntity.className)..objectId = element)
-                .toList(),
-          );
-        }
-      }
-    } else {
-      if (modelList.isEmpty) {
-        parseObject.unset('involveds');
-      } else {
-        for (var element in modelList) {
-          if (element.isSelected == true) {
-            itemList.add(element.id!);
-          }
-        }
-        if (itemList.isNotEmpty) {
-          parseObject.removeRelation(
-            'involveds',
-            itemList
-                .map((element) =>
-                    ParseObject(PersonEntity.className)..objectId = element)
-                .toList(),
-          );
-        }
-      }
-    }
-
-    if (modelList.isNotEmpty && itemList.isEmpty) {
-      return null;
-    } else {
-      return parseObject;
-    }
-  }
 }

@@ -29,10 +29,11 @@ class OperationCard extends StatelessWidget {
                     _personController.getOperatorsList(operationModel.id!),
                 icon: const Icon(Icons.people),
               ),
-              // IconButton(
-              //   onPressed: () => _personController.viewData(operationModel.id!),
-              //   icon: const Icon(Icons.art_track),
-              // ),
+              IconButton(
+                onPressed: () =>
+                    _personController.getInvolvedsList(operationModel.id!),
+                icon: const Icon(Icons.people_outline),
+              ),
 
               // IconButton(
               //   onPressed: () =>

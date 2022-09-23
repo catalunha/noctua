@@ -5,7 +5,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 abstract class PersonRepository {
   Future<List<PersonModel>> list(QueryBuilder<ParseObject> query);
-  // Future<PersonModel?> read(String id);
+  Future<PersonModel?> read(String id);
   Future<String> addEdit(PersonModel model);
   Future<List<LawModel>> readRelationLaws(String personId);
   Future<void> updateRelationLaws(String personId, List<LawModel> modelList);

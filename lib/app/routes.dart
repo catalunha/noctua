@@ -11,7 +11,8 @@ import 'package:noctua/app/view/pages/auth/login/auth_login_page.dart';
 import 'package:noctua/app/view/pages/auth/register/email/auth_register_email.page.dart';
 import 'package:noctua/app/view/pages/auth/splash/splash_page.dart';
 import 'package:noctua/app/view/pages/home/home_page.dart';
-import 'package:noctua/app/view/pages/operation/operation_addedit_operators_page.dart';
+import 'package:noctua/app/view/pages/operation/operation_involveds_page.dart';
+import 'package:noctua/app/view/pages/operation/operation_operators_page.dart';
 import 'package:noctua/app/view/pages/operation/operation_addedit_page.dart';
 import 'package:noctua/app/view/pages/operation/operation_page.dart';
 import 'package:noctua/app/view/pages/person/parts/image_get_crop.dart';
@@ -42,7 +43,8 @@ class Routes {
 
   static const operation = '/operation';
   static const operationAddEdit = '/operation/addedit';
-  static const operationAddEditOperators = '/operation/addedit/operators';
+  static const operationOperators = '/operation/operators';
+  static const operationInvolveds = '/operation/involveds';
 
   static final pageList = [
     GetPage(
@@ -113,8 +115,12 @@ class Routes {
       page: () => OperationAddEditPage(),
     ),
     GetPage(
-      name: Routes.operationAddEditOperators,
-      page: () => OperationAddEditOperators(),
+      name: Routes.operationOperators,
+      page: () => OperationOperators(),
+    ),
+    GetPage(
+      name: Routes.operationInvolveds,
+      page: () => OperationInvolveds(),
     ),
   ];
 }

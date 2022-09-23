@@ -28,22 +28,23 @@ class _ImageGetCropState extends State<ImageGetCrop> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: !kIsWeb ? AppBar(title: const Text('Adicionar imagem')) : null,
+      // appBar: !kIsWeb ? AppBar(title: const Text('Adicionar imagem')) : null,
+      appBar: AppBar(title: const Text('Adicionar imagem')),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (kIsWeb)
-            Padding(
-              padding: const EdgeInsets.all(kIsWeb ? 24.0 : 16.0),
-              child: Text(
-                'Adicionar imagem',
-                style: Theme.of(context)
-                    .textTheme
-                    .displayMedium!
-                    .copyWith(color: Theme.of(context).highlightColor),
-              ),
-            ),
+          // if (kIsWeb)
+          //   const Padding(
+          //     padding: EdgeInsets.all(kIsWeb ? 24.0 : 16.0),
+          //     child: Text(
+          //       'Adicionar imagem',
+          //       // style: Theme.of(context)
+          //       //     .textTheme
+          //       //     .displayMedium!
+          //       //     .copyWith(color: Theme.of(context).highlightColor),
+          //     ),
+          //   ),
           Expanded(child: _body()),
         ],
       ),
@@ -75,7 +76,7 @@ class _ImageGetCropState extends State<ImageGetCrop> {
               ),
             ),
           ),
-          const SizedBox(height: 24.0),
+          // const SizedBox(height: 24.0),
           _menu(),
         ],
       ),
@@ -89,8 +90,8 @@ class _ImageGetCropState extends State<ImageGetCrop> {
       final path = widget.croppedFile!.path;
       return ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: 0.8 * screenWidth,
-          maxHeight: 0.7 * screenHeight,
+          maxWidth: 0.7 * screenWidth,
+          maxHeight: 0.6 * screenHeight,
         ),
         child: kIsWeb ? Image.network(path) : Image.file(File(path)),
       );
@@ -98,8 +99,8 @@ class _ImageGetCropState extends State<ImageGetCrop> {
       final path = widget.pickedFile!.path;
       return ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: 0.8 * screenWidth,
-          maxHeight: 0.7 * screenHeight,
+          maxWidth: 0.7 * screenWidth,
+          maxHeight: 0.6 * screenHeight,
         ),
         child: kIsWeb ? Image.network(path) : Image.file(File(path)),
       );
@@ -235,21 +236,25 @@ class _ImageGetCropState extends State<ImageGetCrop> {
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
           ),
-          IOSUiSettings(
-            title: 'Cropper',
-          ),
+          // IOSUiSettings(
+          //   title: 'Cropper',
+          // ),
           WebUiSettings(
             context: context,
-            presentStyle: CropperPresentStyle.dialog,
+            presentStyle: CropperPresentStyle.page,
             boundary: const CroppieBoundary(
-              width: 520,
-              height: 520,
+              width: 320,
+              height: 320,
             ),
             viewPort:
-                const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+                const CroppieViewPort(width: 180, height: 180, type: 'square'),
             enableExif: true,
+            enableOrientation: true,
+            enforceBoundary: true,
             enableZoom: true,
             showZoomer: true,
+            mouseWheelZoom: true,
+            enableResize: true,
           ),
         ],
       );

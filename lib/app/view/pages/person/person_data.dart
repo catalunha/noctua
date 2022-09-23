@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:noctua/app/view/controllers/person/person_controller.dart';
+
+import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/view/pages/utils/app_assets.dart';
 import 'package:noctua/app/view/pages/utils/app_theme.dart';
 
 class PersonData extends StatelessWidget {
-  final PersonController _personController = Get.find();
   final dateFormat = DateFormat('dd/MM/y');
-
-  PersonData({super.key});
+  PersonModel? personModel;
+  PersonData({
+    Key? key,
+    this.personModel,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    personModel = Get.arguments;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dados da pessoa'),
@@ -23,54 +27,52 @@ class PersonData extends StatelessWidget {
             // mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(_personController.person!.isFemale ? "Homem" : "Mulher"),
-              _personController.person!.photo != null &&
-                      _personController.person!.photo!.isNotEmpty
+              Text(personModel!.isFemale ? "Homem" : "Mulher"),
+              personModel!.photo != null && personModel!.photo!.isNotEmpty
                   ? Image.network(
-                      _personController.person!.photo!,
+                      personModel!.photo!,
                     )
                   : Image.asset(AppAssets.logo),
               const Text('Apelido:'),
               Text(
-                _personController.person?.alias?.join(", ") ?? "...",
+                personModel!.alias?.join(", ") ?? "...",
                 style: AppTheme.textRed18Bold,
               ),
               const Text('Nome:'),
               Text(
-                _personController.person?.name ?? "...",
+                personModel!.name ?? "...",
                 style: AppTheme.textRed18Bold,
               ),
               const Text('CPF:'),
               Text(
-                _personController.person?.cpf ?? "...",
+                personModel!.cpf ?? "...",
                 style: AppTheme.textRed18Bold,
               ),
               const Text('Nascimento:'),
               Text(
-                _personController.person?.birthday != null
-                    ? dateFormat.format(_personController.person!.birthday!)
+                personModel!.birthday != null
+                    ? dateFormat.format(personModel!.birthday!)
                     : "...",
                 style: AppTheme.textRed18Bold,
               ),
               const Text('Mãe:'),
               Text(
-                _personController.person?.mother ?? "...",
+                personModel!.mother ?? "...",
                 style: AppTheme.textRed18Bold,
               ),
               const Text('Caracteristicas:'),
               Text(
-                _personController.person?.mark ?? "...",
+                personModel!.mark ?? "...",
                 style: AppTheme.textRed18Bold,
               ),
               const Text('Historico:'),
               Text(
-                _personController.person?.history ?? "...",
+                personModel!.history ?? "...",
                 style: AppTheme.textRed18Bold,
               ),
+              Text('Leis (${personModel!.laws?.length.toString() ?? ""}):'),
               Text(
-                  'Leis (${_personController.person?.laws?.length.toString() ?? ""}):'),
-              Text(
-                _personController.person?.laws
+                personModel!.laws
                         ?.map((e) => e.description)
                         .toList()
                         .join('\n') ??
@@ -78,10 +80,10 @@ class PersonData extends StatelessWidget {
                 style: AppTheme.textRed18Bold,
               ),
               Text(
-                  'Imagens (${_personController.person?.images?.length.toString() ?? ""}):'),
-              if (_personController.person!.images != null &&
-                  _personController.person!.images!.isNotEmpty)
-                ..._personController.person!.images!
+                  'Imagens (${personModel!.images?.length.toString() ?? ""}):'),
+              if (personModel!.images != null &&
+                  personModel!.images!.isNotEmpty)
+                ...personModel!.images!
                     .map((e) => Image.network(
                           e.photo!,
                         ))
@@ -89,7 +91,7 @@ class PersonData extends StatelessWidget {
               const Divider(),
               const Text('id:'),
               Text(
-                _personController.person!.id!,
+                personModel!.id!,
                 style: AppTheme.textRed18Bold,
               ),
             ],

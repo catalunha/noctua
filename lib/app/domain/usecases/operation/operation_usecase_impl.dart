@@ -27,7 +27,7 @@ class OperationUseCaseImpl implements OperationUsecase {
   Future<List<UserModel>> readRelationOperators(String personId) async =>
       await _repository.readRelationOperators(personId);
   @override
-  Future<List<PersonModel>> readRelationInvolved(String personId) async =>
+  Future<List<PersonModel>> readRelationInvolveds(String personId) async =>
       await _repository.readRelationInvolveds(personId);
 
   @override
@@ -36,9 +36,9 @@ class OperationUseCaseImpl implements OperationUsecase {
       await _repository.updateRelationOperators(objectId, modelIdList, add);
 
   @override
-  Future<void> updateRelationInvolved(
-          String personId, List<PersonModel> modelList) async =>
-      await _repository.updateRelationInvolved(personId, modelList);
+  Future<void> updateRelationInvolveds(
+          String personId, List<String> modelIdList, bool add) async =>
+      await _repository.updateRelationInvolveds(personId, modelIdList, add);
 
   @override
   Future<void> delete(String id) async => await _repository.delete(id);

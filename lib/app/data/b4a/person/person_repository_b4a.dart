@@ -189,27 +189,27 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   //   await parseObject.save();
   // }
 
-  // @override
-  // Future<PersonModel?> read(String id) async {
-  //   QueryBuilder<ParseObject> query =
-  //       QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
-  //   query.whereEqualTo('objectId', id);
-  //   query.includeObject(['user', 'user.profile']);
-  //   query.first();
-  //   final ParseResponse response = await query.query();
-  //   PersonModel? temp;
-  //   if (response.success && response.results != null) {
-  //     for (var element in response.results!) {
-  //       // //print((element as ParseObject).objectId);
-  //       temp = await PersonEntity().fromParse(element);
-  //     }
-  //     // return listTemp;
-  //   } else {
-  //     //print('nao encontrei esta Person...');
-  //     // return [];
-  //   }
-  //   return temp;
-  // }
+  @override
+  Future<PersonModel?> read(String id) async {
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+    query.whereEqualTo('objectId', id);
+    query.includeObject(['user', 'user.profile']);
+    query.first();
+    final ParseResponse response = await query.query();
+    PersonModel? temp;
+    if (response.success && response.results != null) {
+      for (var element in response.results!) {
+        // //print((element as ParseObject).objectId);
+        temp = PersonEntity().fromParse(element);
+      }
+      // return listTemp;
+    } else {
+      //print('nao encontrei esta Person...');
+      // return [];
+    }
+    return temp;
+  }
 
   // @override
   // Future<List<PersonModel>> listThisPerson(String personId) async {

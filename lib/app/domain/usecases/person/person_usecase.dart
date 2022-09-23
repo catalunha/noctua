@@ -12,5 +12,5 @@ abstract class PersonUseCase {
   Future<List<PersonImageModel>> readRelationImages(String personId);
   Future<void> updateRelationImages(
       String personId, List<PersonImageModel> modelList);
-  // Future<PersonModel?> read(String id);
+  Future<PersonModel?> read(String id);
 }

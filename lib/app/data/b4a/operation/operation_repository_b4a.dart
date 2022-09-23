@@ -82,71 +82,44 @@ class OperationRepositoryB4a extends GetxService
     }
   }
 
-  // @override
-  // Future<bool> updateRelation(PersonModel model) async {
-  //   //print('updateRelation images: ${model.images}');
-  //   //print('updateRelation laws: ${model.laws}');
-  //   final parseObject = PersonEntity().toParseAddRelation(model);
-  //   if (parseObject != null) {
-  //     await parseObject.save();
-  //   }
-  //   final parseObject2 = PersonEntity().toParseRemoveRelation(model);
-  //   if (parseObject2 != null) {
-  //     await parseObject2.save();
-  //   }
-  //   return true;
-  // }
-
   @override
-  Future<List<UserModel>> readRelationOperators(String personId) async {
+  Future<List<UserModel>> readRelationOperators(String operationId) async {
     //+++ get images
     List<UserModel> users = [];
     QueryBuilder<ParseObject> query =
         QueryBuilder<ParseObject>(ParseObject(UserEntity.className));
-    query.whereRelatedTo('operators', 'Operation', personId);
-    // query.includeObject(['operators', 'operators.profile']);
+    query.whereRelatedTo('operators', 'Operation', operationId);
     query.includeObject(['profile']);
-    print('Query response para: $personId');
-    print('Query: $query');
     final ParseResponse response = await query.query();
     if (response.success && response.results != null) {
-      print('response.results: ${response.results!.length}');
       users = [
         ...response.results!
             .map<UserModel>((e) => UserEntity().fromParse(e))
             .toList()
       ];
-      // users.addAll(responseImages.results!
-      //     .map<PersonImageModel>(
-      //         (e) => PersonImageEntity().fromParse(e as ParseObject))
-      //     .toList());
     }
     //--- get users
     return users;
   }
 
   @override
-  Future<List<PersonModel>> readRelationInvolveds(String personId) async {
-    //+++ get laws
-    List<PersonModel> laws = [];
+  Future<List<PersonModel>> readRelationInvolveds(String operationId) async {
+    //+++ get personList
+    List<PersonModel> personList = [];
     QueryBuilder<ParseObject> query =
         QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
-    query.whereRelatedTo('involveds', 'Person', personId);
-    // query.includeObject(
-    // ['involveds', 'involveds.user', 'operators.user.profile']);
-    final ParseResponse responseLaws = await query.query();
-    if (responseLaws.success && responseLaws.results != null) {
-      laws = [
-        ...responseLaws.results!
-            .map<PersonModel>((e) => PersonEntity().fromParse(e as ParseObject))
+    query.whereRelatedTo('involveds', 'Operation', operationId);
+    query.includeObject(['user', 'user.profile']);
+    final ParseResponse response = await query.query();
+    if (response.success && response.results != null) {
+      personList = [
+        ...response.results!
+            .map<PersonModel>((e) => PersonEntity().fromParse(e))
             .toList()
       ];
-      // laws.addAll(responseLaws.results!
-      //     .map<LawModel>((e) => LawEntity().fromParse(e as ParseObject))
-      //     .toList());
     }
-    //--- get laws
-    return laws;
+    //--- get personList
+    return personList;
   }
 
   // @override
@@ -175,20 +148,29 @@ class OperationRepositoryB4a extends GetxService
   }
 
   @override
-  Future<void> updateRelationInvolved(
-      String personId, List<PersonModel> modelList) async {
+  Future<void> updateRelationInvolveds(
+      String objectId, List<String> modelIdList, bool add) async {
     final parseObject = OperationEntity().toParseUpdateRelationInvolveds(
-        personId: personId, modelList: modelList, add: true);
-
+        objectId: objectId, modelIdList: modelIdList, add: add);
     if (parseObject != null) {
       await parseObject.save();
     }
-    final parseObject2 = OperationEntity().toParseUpdateRelationInvolveds(
-        personId: personId, modelList: modelList, add: false);
-    if (parseObject2 != null) {
-      await parseObject2.save();
-    }
   }
+  // @override
+  // Future<void> updateRelationInvolved(
+  //     String personId, List<PersonModel> modelList) async {
+  //   final parseObject = OperationEntity().toParseUpdateRelationInvolveds(
+  //       personId: personId, modelList: modelList, add: true);
+
+  //   if (parseObject != null) {
+  //     await parseObject.save();
+  //   }
+  //   final parseObject2 = OperationEntity().toParseUpdateRelationInvolveds(
+  //       personId: personId, modelList: modelList, add: false);
+  //   if (parseObject2 != null) {
+  //     await parseObject2.save();
+  //   }
+  // }
 
   @override
   Future<void> delete(String id) async {

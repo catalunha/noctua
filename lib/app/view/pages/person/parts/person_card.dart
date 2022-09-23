@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/view/controllers/person/person_controller.dart';
@@ -29,6 +30,10 @@ class PersonCard extends StatelessWidget {
           Wrap(
             children: [
               IconButton(
+                onPressed: () => copy(personModel.id!),
+                icon: const Icon(Icons.copy),
+              ),
+              IconButton(
                 onPressed: () => _personController.edit(personModel.id!),
                 icon: const Icon(Icons.edit),
               ),
@@ -51,5 +56,15 @@ class PersonCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  copy(String text) async {
+    Get.snackbar(
+      text,
+      'Id copiado.',
+      // backgroundColor: Colors.yellow,
+      margin: const EdgeInsets.all(10),
+    );
+    await Clipboard.setData(ClipboardData(text: text));
   }
 }

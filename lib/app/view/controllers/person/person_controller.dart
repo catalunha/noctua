@@ -199,7 +199,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     List<LawModel> laws = await _personUseCase.readRelationLaws(id);
     _person.value = _person.value!.copyWith(images: images, laws: laws);
     _person.refresh();
-    Get.toNamed(Routes.personData);
+    Get.toNamed(Routes.personData, arguments: _person.value);
   }
 
   List<LawModel> lawListSaved = [];

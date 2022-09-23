@@ -4,17 +4,16 @@ import 'package:noctua/app/domain/models/user_model.dart';
 import 'package:noctua/app/view/controllers/operation/operation_controller.dart';
 import 'package:noctua/app/view/pages/operation/parts/add_operator.dart';
 
-class OperationAddEditOperators extends StatefulWidget {
+class OperationOperators extends StatefulWidget {
   final OperationController operationController = Get.find();
 
-  OperationAddEditOperators({Key? key}) : super(key: key);
+  OperationOperators({Key? key}) : super(key: key);
 
   @override
-  State<OperationAddEditOperators> createState() =>
-      _OperationAddEditOperatorsState();
+  State<OperationOperators> createState() => _OperationOperatorsState();
 }
 
-class _OperationAddEditOperatorsState extends State<OperationAddEditOperators> {
+class _OperationOperatorsState extends State<OperationOperators> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +30,8 @@ class _OperationAddEditOperatorsState extends State<OperationAddEditOperators> {
               ),
               const SizedBox(height: 5),
               ElevatedButton(
-                child: const Text('Adicionar operador'),
+                child: Text(
+                    'Adicionar operador aos ${widget.operationController.operatorsList.length} atuais'),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -39,8 +39,8 @@ class _OperationAddEditOperatorsState extends State<OperationAddEditOperators> {
                   );
                 },
               ),
-              Text(
-                  'Operadores atuais (${widget.operationController.operatorsList.length}):'),
+              // Text(
+              //     'Operadores atuais (${widget.operationController.operatorsList.length}):'),
               SingleChildScrollView(
                 child: Column(children: [
                   ...widget.operationController.operatorsList
