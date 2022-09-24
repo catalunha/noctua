@@ -18,6 +18,7 @@ import 'package:noctua/app/routes.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_controller.dart';
 import 'package:noctua/app/view/controllers/utils/loader_mixin.dart';
 import 'package:noctua/app/view/controllers/utils/message_mixin.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final PersonUseCase _personUseCase;
@@ -63,7 +64,12 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final Rxn<DateTime> _selectedDate = Rxn<DateTime>();
   DateTime? get selectedDate => _selectedDate.value;
   set selectedDate(DateTime? selectedDate1) {
-    _selectedDate.value = selectedDate1;
+    // _selectedDate.value = selectedDate1.;
+    print('set date');
+    if (selectedDate1 != null) {
+      _selectedDate.value =
+          DateTime(selectedDate1.year, selectedDate1.month, selectedDate1.day);
+    }
   }
 
   @override
@@ -95,7 +101,10 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     print('=========> listaAll');
     _loading(true);
     // _personList.clear();
-    List<PersonModel> temp = await _personUseCase.list(_pagination.value);
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+    List<PersonModel> temp =
+        await _personUseCase.list(query, _pagination.value);
     if (temp.isEmpty) {
       _lastPage.value = true;
     }
@@ -119,15 +128,26 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     Get.toNamed(Routes.personAddEdit);
   }
 
-  void edit(String id) {
-    var phraseTemp = _personList.firstWhere((element) => element.id == id);
-    _person(phraseTemp);
+  void edit(PersonModel personModel) {
+    // var phraseTemp =
+    //     _personList.firstWhere((element) => element.id == personModel.id);
+    // _person(phraseTemp);
+    _person(personModel);
     onSelectedDate();
     pickedXFile = null;
     croppedFile = null;
 
     Get.toNamed(Routes.personAddEdit);
   }
+  // void edit(String id) {
+  //   var phraseTemp = _personList.firstWhere((element) => element.id == id);
+  //   _person(phraseTemp);
+  //   onSelectedDate();
+  //   pickedXFile = null;
+  //   croppedFile = null;
+
+  //   Get.toNamed(Routes.personAddEdit);
+  // }
 
   Future<void> addedit({
     bool isFemale = true,
@@ -200,9 +220,9 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       }
       pickedXFile = null;
       croppedFile = null;
-      PersonModel modelFinal = model.copyWith(id: personId, photo: photo);
-      int index = _personList.indexWhere((e) => e.id == personId);
-      if (index >= 0) _personList.fillRange(index, index + 1, modelFinal);
+      // PersonModel modelFinal = model.copyWith(id: personId, photo: photo);
+      // int index = _personList.indexWhere((e) => e.id == personId);
+      // if (index >= 0) _personList.fillRange(index, index + 1, modelFinal);
     } on PersonRepositoryException {
       _message.value = MessageModel(
         title: 'Erro em Repository',
@@ -210,27 +230,37 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         isError: true,
       );
     } finally {
+      _personList.clear();
+      _changePagination(1, 2);
+      _lastPage.value = false;
+
       _loading(false);
       Get.back();
     }
   }
 
-  void viewData(String id) async {
-    var phraseTemp = _personList.firstWhere((element) => element.id == id);
-    _person(phraseTemp);
-    List<PersonImageModel> images = await _personUseCase.readRelationImages(id);
-    List<LawModel> laws = await _personUseCase.readRelationLaws(id);
+  void viewData(PersonModel personModel) async {
+    // var phraseTemp = _personList.firstWhere((element) => element.id == id);
+    // _person(phraseTemp);
+    _person(personModel);
+
+    List<PersonImageModel> images =
+        await _personUseCase.readRelationImages(personModel.id!);
+    List<LawModel> laws =
+        await _personUseCase.readRelationLaws(personModel.id!);
     _person.value = _person.value!.copyWith(images: images, laws: laws);
     _person.refresh();
     Get.toNamed(Routes.personData, arguments: _person.value);
   }
 
   List<LawModel> lawListSaved = [];
-  void addDeleteLaw(String id) async {
-    var phraseTemp = _personList.firstWhere((element) => element.id == id);
-    _person(phraseTemp);
+  void addDeleteLaw(PersonModel personModel) async {
+    // var phraseTemp = _personList.firstWhere((element) => element.id == id);
+    // _person(phraseTemp);
+    _person(personModel);
+
     lawListSaved.clear();
-    lawListSaved = await _personUseCase.readRelationLaws(id);
+    lawListSaved = await _personUseCase.readRelationLaws(personModel.id!);
 
     List<LawModel> allLawsTemp = await _lawUseCase.list();
     allLaws(allLawsTemp);
@@ -283,18 +313,23 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         isError: true,
       );
     } finally {
-      // await listAll();
+      _personList.clear();
+      _changePagination(1, 2);
+      _lastPage.value = false;
       _loading(false);
       Get.back();
     }
   }
 
-  void addDeleteImage(String id) async {
-    var phraseTemp = _personList.firstWhere((element) => element.id == id);
-    _person(phraseTemp);
+  void addDeleteImage(PersonModel personModel) async {
+    // var phraseTemp = _personList.firstWhere((element) => element.id == id);
+    // _person(phraseTemp);
+    _person(personModel);
+
     pickedXFile = null;
     croppedFile = null;
-    List<PersonImageModel> images = await _personUseCase.readRelationImages(id);
+    List<PersonImageModel> images =
+        await _personUseCase.readRelationImages(personModel.id!);
     personImageList(images);
     Get.toNamed(Routes.personAddEditImage);
   }
@@ -357,7 +392,9 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         isError: true,
       );
     } finally {
-      // await listAll();
+      _personList.clear();
+      _changePagination(1, 2);
+      _lastPage.value = false;
       _loading(false);
       // Get.back();
     }

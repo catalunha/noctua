@@ -11,12 +11,15 @@ import 'package:noctua/app/domain/utils/pagination.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class PersonRepositoryB4a extends GetxService implements PersonRepository {
-  Future<QueryBuilder<ParseObject>> getQueryAll(Pagination pagination) async {
-    QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+  Future<QueryBuilder<ParseObject>> getQueryAll(
+      QueryBuilder<ParseObject> query, Pagination pagination) async {
+    // QueryBuilder<ParseObject> query =
+    //     QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
     final user = await ParseUser.currentUser() as ParseUser;
     query.whereEqualTo('user', user);
     query.whereEqualTo('isDeleted', false);
+    query.orderByDescending('updatedAt');
+
     query.setAmountToSkip((pagination.page - 1) * pagination.limit);
     query.setLimit(pagination.limit);
     query.includeObject(['user', 'user.profile']);
@@ -48,15 +51,16 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   // }
 
   @override
-  Future<List<PersonModel>> list(Pagination pagination) async {
+  Future<List<PersonModel>> list(
+      QueryBuilder<ParseObject> query, Pagination pagination) async {
     // QueryBuilder<ParseObject> query;
     // if (queryType == GetQueryFilterPerson.archived) {
     // query = await getQueryArchived();
     // } else {
-    QueryBuilder<ParseObject> query = await getQueryAll(pagination);
+    QueryBuilder<ParseObject> queryFinal = await getQueryAll(query, pagination);
     // }
 
-    final ParseResponse response = await query.query();
+    final ParseResponse response = await queryFinal.query();
     List<PersonModel> listTemp = <PersonModel>[];
     if (response.success && response.results != null) {
       for (var element in response.results!) {

@@ -72,7 +72,7 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
                 AppTextFormField(
                   label: 'CPF. Apenas números',
                   controller: _cpfTEC,
-                  validator: Validatorless.cpf('Número não é CPF'),
+                  validator: Validatorless.cpf('Número não é CPF válido'),
                 ),
                 AppTextFormField(
                   label: 'Nome completo da mãe',

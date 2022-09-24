@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/view/controllers/person/person_controller.dart';
-import 'package:noctua/app/view/pages/utils/app_assets.dart';
 
 class PersonCard extends StatelessWidget {
   final PersonController _personController = Get.find();
@@ -13,19 +13,59 @@ class PersonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateFormat formatter = DateFormat('dd/MM/yyyy');
+
     return Card(
       child: Column(
         children: [
-          ListTile(
-            leading: personModel.photo != null && personModel.photo!.isNotEmpty
-                ? Image.network(
-                    personModel.photo!,
-                    height: 50,
-                    width: 50,
-                  )
-                : Image.asset(AppAssets.logo),
-            title: Text(personModel.alias?.join(", ") ?? "Sem nome"),
-            subtitle: Text(personModel.id!),
+          // ListTile(
+          //   leading: personModel.photo != null && personModel.photo!.isNotEmpty
+          //       ? Image.network(
+          //           personModel.photo!,
+          //           height: 50,
+          //           width: 50,
+          //         )
+          //       : Image.asset(AppAssets.logo),
+          //   title: Text(personModel.alias?.join(", ") ?? "Sem nome"),
+          //   subtitle: Text(personModel.id!),
+          // ),
+          Row(
+            children: [
+              personModel.photo != null && personModel.photo!.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.network(
+                        personModel.photo!,
+                        height: 58,
+                        width: 58,
+                      ),
+                    )
+                  : const SizedBox(
+                      height: 58, width: 58, child: Icon(Icons.warning)),
+              // e.photoByte != null && e.photoByte!.isNotEmpty
+              //     ? Image.memory(
+              //         Uint8List.fromList(e.photoByte!),
+              //         width: 75,
+              //         height: 75,
+              //         // fit: BoxFit.contain,
+              //       )
+              //     : const Text('...'),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Nome: ${personModel.name}'),
+                    Text('Alias: ${personModel.alias?.join(",")}'),
+                    Text('Mae: ${personModel.mother}'),
+                    Text('CPF: ${personModel.cpf}'),
+                    Text('Marcas: ${personModel.mark}'),
+                    // Text('DataNasc: ${e.birthday?.toIso8601String()}'),
+                    Text(
+                        'DataNasc: ${personModel.birthday != null ? formatter.format(personModel.birthday!) : "..."}'),
+                  ],
+                ),
+              ),
+            ],
           ),
           Wrap(
             children: [
@@ -34,21 +74,19 @@ class PersonCard extends StatelessWidget {
                 icon: const Icon(Icons.copy),
               ),
               IconButton(
-                onPressed: () => _personController.edit(personModel.id!),
+                onPressed: () => _personController.edit(personModel),
                 icon: const Icon(Icons.edit),
               ),
               IconButton(
-                onPressed: () => _personController.viewData(personModel.id!),
+                onPressed: () => _personController.viewData(personModel),
                 icon: const Icon(Icons.art_track),
               ),
               IconButton(
-                onPressed: () =>
-                    _personController.addDeleteImage(personModel.id!),
+                onPressed: () => _personController.addDeleteImage(personModel),
                 icon: const Icon(Icons.photo_library_rounded),
               ),
               IconButton(
-                onPressed: () =>
-                    _personController.addDeleteLaw(personModel.id!),
+                onPressed: () => _personController.addDeleteLaw(personModel),
                 icon: const Icon(Icons.crop_sharp),
               ),
             ],

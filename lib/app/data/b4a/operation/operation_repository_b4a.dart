@@ -28,6 +28,7 @@ class OperationRepositoryB4a extends GetxService
       ParseObject(OperationEntity.className),
       [queryOperators, queryOrganizer],
     );
+    mainQuery.orderByDescending('updatedAt');
     mainQuery.includeObject(['organizer', 'organizer.profile']);
     return mainQuery;
   }

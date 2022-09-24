@@ -109,7 +109,7 @@ class PersonSearchController extends GetxController
       query.whereEqualTo('birthday', selectedDate);
       selectedDate = selectedDate!.add(const Duration(hours: 3));
     }
-    List<PersonModel> temp = await _personUseCase.list(Pagination());
+    List<PersonModel> temp = await _personUseCase.list(query, Pagination());
 
     personList.addAll([...temp]);
     _loading(false);

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:noctua/app/view/controllers/person/search/people_search_controller.dart';
+import 'package:noctua/app/view/pages/person/parts/person_card.dart';
 
 class PersonSearchResultPage extends StatelessWidget {
   final PersonSearchController personSearchController = Get.find();
@@ -32,46 +33,47 @@ class PersonSearchResultPage extends StatelessWidget {
     for (var e in personSearchController.personList) {
       list.add(InkWell(
         onTap: () => copy(e.id!),
-        child: Card(
-          child: Row(
-            children: [
-              e.photo != null && e.photo!.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Image.network(
-                        e.photo!,
-                        height: 58,
-                        width: 58,
-                      ),
-                    )
-                  : const SizedBox(
-                      height: 58, width: 58, child: Icon(Icons.warning)),
-              // e.photoByte != null && e.photoByte!.isNotEmpty
-              //     ? Image.memory(
-              //         Uint8List.fromList(e.photoByte!),
-              //         width: 75,
-              //         height: 75,
-              //         // fit: BoxFit.contain,
-              //       )
-              //     : const Text('...'),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Nome: ${e.name}'),
-                    Text('Alias: ${e.alias?.join(",")}'),
-                    Text('Mae: ${e.mother}'),
-                    Text('CPF: ${e.cpf}'),
-                    Text('Marcas: ${e.mark}'),
-                    // Text('DataNasc: ${e.birthday?.toIso8601String()}'),
-                    Text(
-                        'DataNasc: ${e.birthday != null ? formatter.format(e.birthday!) : "..."}'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: PersonCard(personModel: e),
+        // child: Card(
+        //   child: Row(
+        //     children: [
+        //       e.photo != null && e.photo!.isNotEmpty
+        //           ? ClipRRect(
+        //               borderRadius: BorderRadius.circular(8.0),
+        //               child: Image.network(
+        //                 e.photo!,
+        //                 height: 58,
+        //                 width: 58,
+        //               ),
+        //             )
+        //           : const SizedBox(
+        //               height: 58, width: 58, child: Icon(Icons.warning)),
+        //       // e.photoByte != null && e.photoByte!.isNotEmpty
+        //       //     ? Image.memory(
+        //       //         Uint8List.fromList(e.photoByte!),
+        //       //         width: 75,
+        //       //         height: 75,
+        //       //         // fit: BoxFit.contain,
+        //       //       )
+        //       //     : const Text('...'),
+        //       Expanded(
+        //         child: Column(
+        //           crossAxisAlignment: CrossAxisAlignment.start,
+        //           children: [
+        //             Text('Nome: ${e.name}'),
+        //             Text('Alias: ${e.alias?.join(",")}'),
+        //             Text('Mae: ${e.mother}'),
+        //             Text('CPF: ${e.cpf}'),
+        //             Text('Marcas: ${e.mark}'),
+        //             // Text('DataNasc: ${e.birthday?.toIso8601String()}'),
+        //             Text(
+        //                 'DataNasc: ${e.birthday != null ? formatter.format(e.birthday!) : "..."}'),
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ));
     }
     return list;
