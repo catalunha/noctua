@@ -119,6 +119,12 @@ class OperationController extends GetxController
     }
   }
 
+  bool operationIsUser() {
+    SplashController splashController = Get.find();
+    UserModel userModel = splashController.userModel!;
+    return operation!.organizer == userModel;
+  }
+
   void getOperatorsList(String id) async {
     var phraseTemp = operationList.firstWhere((element) => element.id == id);
     operation = phraseTemp;

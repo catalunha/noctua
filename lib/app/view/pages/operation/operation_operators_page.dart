@@ -28,16 +28,21 @@ class _OperationOperatorsState extends State<OperationOperators> {
                 subtitle:
                     Text(widget.operationController.operation!.boss ?? '...'),
               ),
+
               const SizedBox(height: 5),
-              ElevatedButton(
-                child: Text(
-                    'Adicionar operador aos ${widget.operationController.operatorsList.length} atuais'),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) => AddOperator(),
-                  );
-                },
+              if (widget.operationController.operationIsUser())
+                ElevatedButton(
+                  child: Text(
+                      'Adicionar operador aos ${widget.operationController.operatorsList.length} atuais'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AddOperator(),
+                    );
+                  },
+                ),
+              const Divider(
+                color: Colors.green,
               ),
               // Text(
               //     'Operadores atuais (${widget.operationController.operatorsList.length}):'),
@@ -57,11 +62,15 @@ class _OperationOperatorsState extends State<OperationOperators> {
 
   Widget add(UserModel user) {
     return ListTile(
-        title: Text(user.profile!.name ?? '...'),
-        subtitle: Text(user.profile!.unit ?? '...'),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_forever),
-          onPressed: () => widget.operationController.deleteOperator(user.id),
-        ));
+      title: Text(user.profile!.name ?? '...'),
+      subtitle: Text(user.profile!.unit ?? '...'),
+      trailing: widget.operationController.operationIsUser()
+          ? IconButton(
+              icon: const Icon(Icons.delete_forever),
+              onPressed: () =>
+                  widget.operationController.deleteOperator(user.id),
+            )
+          : null,
+    );
   }
 }

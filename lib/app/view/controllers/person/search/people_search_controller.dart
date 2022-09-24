@@ -73,7 +73,7 @@ class PersonSearchController extends GetxController
       query.whereContains('alias', aliasContainsString);
     }
     if (aliasEqualToBool) {
-      query.whereContainedIn('alias', [aliasContainsString]);
+      query.whereContainedIn('alias', [aliasEqualToString]);
     }
     if (nameContainsBool) {
       query.whereContains('name', nameContainsString);

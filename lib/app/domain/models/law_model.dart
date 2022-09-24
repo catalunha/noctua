@@ -3,13 +3,11 @@ import 'dart:convert';
 
 class LawModel {
   final String? id;
-  final String book;
   final String name;
   final String? description;
   final bool? isDeleted;
   LawModel({
     this.id,
-    required this.book,
     required this.name,
     this.description,
     this.isDeleted,
@@ -17,14 +15,12 @@ class LawModel {
 
   LawModel copyWith({
     String? id,
-    String? book,
     String? name,
     String? description,
     bool? isDeleted,
   }) {
     return LawModel(
       id: id ?? this.id,
-      book: book ?? this.book,
       name: name ?? this.name,
       description: description ?? this.description,
       isDeleted: isDeleted ?? this.isDeleted,
@@ -37,7 +33,6 @@ class LawModel {
     if (id != null) {
       result.addAll({'id': id});
     }
-    result.addAll({'book': book});
     result.addAll({'name': name});
     if (description != null) {
       result.addAll({'description': description});
@@ -52,7 +47,6 @@ class LawModel {
   factory LawModel.fromMap(Map<String, dynamic> map) {
     return LawModel(
       id: map['id'],
-      book: map['book'] ?? '',
       name: map['name'] ?? '',
       description: map['description'],
       isDeleted: map['isDeleted'],
@@ -66,7 +60,7 @@ class LawModel {
 
   @override
   String toString() {
-    return 'LawModel(id: $id, book: $book, name: $name, description: $description, isDeleted: $isDeleted)';
+    return 'LawModel(id: $id, name: $name, description: $description, isDeleted: $isDeleted)';
   }
 
   @override
@@ -75,7 +69,6 @@ class LawModel {
 
     return other is LawModel &&
         other.id == id &&
-        other.book == book &&
         other.name == name &&
         other.description == description &&
         other.isDeleted == isDeleted;
@@ -84,7 +77,6 @@ class LawModel {
   @override
   int get hashCode {
     return id.hashCode ^
-        book.hashCode ^
         name.hashCode ^
         description.hashCode ^
         isDeleted.hashCode;

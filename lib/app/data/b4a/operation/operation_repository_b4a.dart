@@ -12,14 +12,43 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 class OperationRepositoryB4a extends GetxService
     implements OperationRepository {
   Future<QueryBuilder<ParseObject>> getQueryAll() async {
+    final user = await ParseUser.currentUser() as ParseUser;
+    QueryBuilder<ParseObject> queryOrganizer =
+        QueryBuilder<ParseObject>(ParseObject(OperationEntity.className));
+    queryOrganizer.whereEqualTo('organizer', user);
+    queryOrganizer.whereEqualTo('isDeleted', false);
+    // includeObject does not come in this query
+    QueryBuilder<ParseObject> queryOperators =
+        QueryBuilder<ParseObject>(ParseObject(OperationEntity.className));
+
+    queryOperators.whereEqualTo('operators', user);
+    queryOperators.whereEqualTo('isDeleted', false);
+    // includeObject does not come in this query
+    QueryBuilder<ParseObject> mainQuery = QueryBuilder.or(
+      ParseObject(OperationEntity.className),
+      [queryOperators, queryOrganizer],
+    );
+    mainQuery.includeObject(['organizer', 'organizer.profile']);
+    return mainQuery;
+  }
+
+/*
+class OperationRepositoryB4a extends GetxService
+    implements OperationRepository {
+  Future<QueryBuilder<ParseObject>> getQueryAll() async {
     QueryBuilder<ParseObject> query =
         QueryBuilder<ParseObject>(ParseObject(OperationEntity.className));
     final user = await ParseUser.currentUser() as ParseUser;
+    // query.whereEqualTo('organizer', user);
     query.whereEqualTo('isDeleted', false);
+    // query.whereEqualTo(
+    //     'operators', ParseObject('_User')..objectId = 'b0RtxBWHZ4');
+    query.whereEqualTo('operators', user);
     query.includeObject(['organizer', 'organizer.profile']);
 
     return query;
   }
+*/
 
   // Future<QueryBuilder<ParseObject>> getQueryArchived() async {
   //   QueryBuilder<ParseObject> query =
@@ -53,8 +82,9 @@ class OperationRepositoryB4a extends GetxService
     // } else {
     query = await getQueryAll();
     // }
-
+    print('-*-*-*');
     final ParseResponse response = await query.query();
+    print('-*-*-*');
     List<OperationModel> listTemp = <OperationModel>[];
     if (response.success && response.results != null) {
       for (var element in response.results!) {

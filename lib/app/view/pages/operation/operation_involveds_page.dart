@@ -30,15 +30,19 @@ class _OperationInvolvedsState extends State<OperationInvolveds> {
                     Text(widget.operationController.operation!.boss ?? '...'),
               ),
               const SizedBox(height: 5),
-              ElevatedButton(
-                child: Text(
-                    'Adicionar envolvido aos ${widget.operationController.involvedsList.length} atuais'),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) => AddInvolved(),
-                  );
-                },
+              if (widget.operationController.operationIsUser())
+                ElevatedButton(
+                  child: Text(
+                      'Adicionar envolvido aos ${widget.operationController.involvedsList.length} atuais'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AddInvolved(),
+                    );
+                  },
+                ),
+              const Divider(
+                color: Colors.green,
               ),
               SingleChildScrollView(
                 child: Column(children: [
@@ -65,11 +69,13 @@ class _OperationInvolvedsState extends State<OperationInvolveds> {
           : Image.asset(AppAssets.logo),
       title: Text(personModel.alias?.join(", ") ?? "Sem nome"),
       subtitle: Text(personModel.id!),
-      trailing: IconButton(
-        icon: const Icon(Icons.delete_forever),
-        onPressed: () =>
-            widget.operationController.deleteInvolved(personModel.id!),
-      ),
+      trailing: widget.operationController.operationIsUser()
+          ? IconButton(
+              icon: const Icon(Icons.delete_forever),
+              onPressed: () =>
+                  widget.operationController.deleteInvolved(personModel.id!),
+            )
+          : null,
       onTap: () => widget.operationController.viewPersonData(personModel.id!),
     );
   }
