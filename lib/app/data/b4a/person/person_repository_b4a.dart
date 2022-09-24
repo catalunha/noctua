@@ -7,17 +7,18 @@ import 'package:noctua/app/data/repositories/person_repository.dart';
 import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
+import 'package:noctua/app/domain/utils/pagination.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class PersonRepositoryB4a extends GetxService implements PersonRepository {
-  Future<QueryBuilder<ParseObject>> getQueryAll(
-      QueryBuilder<ParseObject> query) async {
-    // QueryBuilder<ParseObject> query =
-    //     QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
-    // final user = await ParseUser.currentUser() as ParseUser;
-    // query.whereEqualTo('isMale', true);
-    // query.
+  Future<QueryBuilder<ParseObject>> getQueryAll(Pagination pagination) async {
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+    final user = await ParseUser.currentUser() as ParseUser;
+    query.whereEqualTo('user', user);
     query.whereEqualTo('isDeleted', false);
+    query.setAmountToSkip((pagination.page - 1) * pagination.limit);
+    query.setLimit(pagination.limit);
     query.includeObject(['user', 'user.profile']);
     return query;
   }
@@ -47,12 +48,12 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   // }
 
   @override
-  Future<List<PersonModel>> list(QueryBuilder<ParseObject> query) async {
+  Future<List<PersonModel>> list(Pagination pagination) async {
     // QueryBuilder<ParseObject> query;
     // if (queryType == GetQueryFilterPerson.archived) {
     // query = await getQueryArchived();
     // } else {
-    query = await getQueryAll(query);
+    QueryBuilder<ParseObject> query = await getQueryAll(pagination);
     // }
 
     final ParseResponse response = await query.query();

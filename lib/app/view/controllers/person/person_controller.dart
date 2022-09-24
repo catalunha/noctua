@@ -12,12 +12,12 @@ import 'package:noctua/app/domain/models/user_model.dart';
 import 'package:noctua/app/domain/usecases/law/law_usecase.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
 import 'package:noctua/app/domain/usecases/person_image/person_image_usecase.dart';
+import 'package:noctua/app/domain/utils/pagination.dart';
 import 'package:noctua/app/domain/utils/xfile_to_parsefile.dart';
 import 'package:noctua/app/routes.dart';
 import 'package:noctua/app/view/controllers/auth/splash/splash_controller.dart';
 import 'package:noctua/app/view/controllers/utils/loader_mixin.dart';
 import 'package:noctua/app/view/controllers/utils/message_mixin.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final PersonUseCase _personUseCase;
@@ -38,6 +38,9 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
 
   final _personList = <PersonModel>[].obs;
   List<PersonModel> get personList => _personList;
+  final _pagination = Pagination().obs;
+  final _lastPage = false.obs;
+  get lastPage => _lastPage.value;
 
   var personImageList = <PersonImageModel>[].obs;
 
@@ -65,18 +68,38 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
 
   @override
   void onInit() async {
+    _personList.clear();
+    ever(_pagination, (_) => listAll());
+    _changePagination(1, 2);
     loaderListener(_loading);
     messageListener(_message);
     super.onInit();
   }
 
+  void _changePagination(int page, int limit) {
+    _pagination.update((val) {
+      val!.page = page;
+      val.limit = limit;
+    });
+    // _pagination(Pagination()
+    //   ..page = page
+    //   ..limit = limit);
+    // _pagination.refresh();
+  }
+
+  void nextPage() {
+    _changePagination(_pagination.value.page + 1, _pagination.value.limit);
+  }
+
   Future<void> listAll() async {
+    print('=========> listaAll');
     _loading(true);
-    _personList.clear();
-    QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
-    List<PersonModel> temp = await _personUseCase.list(query);
-    _personList(temp);
+    // _personList.clear();
+    List<PersonModel> temp = await _personUseCase.list(_pagination.value);
+    if (temp.isEmpty) {
+      _lastPage.value = true;
+    }
+    _personList.addAll(temp);
     _loading(false);
   }
 

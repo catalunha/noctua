@@ -39,33 +39,32 @@ class PopMenuButtonPhotoUser extends StatelessWidget {
           ),
         ];
       },
-      child: Obx(
-        () => Tooltip(
-          message: 'Click para opções',
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20.0),
-            child: _splashController.userModel?.profile?.photo != null
-                ? Image.network(
-                    // 'https://parsefiles.back4app.com/ZuF4FI4dZUN4i9ObIoK6LvTuoIuVFNsVAMRjYNkX/0b28345ecb39e2177d1746f80246ed70_woman2.png',
-                    _splashController.userModel!.profile!.photo!,
-                    height: 30,
-                    width: 30,
-                    errorBuilder: (_, __, ___) {
-                      return const Icon(
-                        Icons.person,
-                        // color: Colors.black,
-                      );
-                    },
-                  )
-                : const Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      '☠️',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-          ),
-        ),
+      child: const Tooltip(
+        message: 'Click para opções',
+        child: Icon(Icons.settings),
+        // child: ClipRRect(
+        //   borderRadius: BorderRadius.circular(20.0),
+        //   child: _splashController.userModel?.profile?.photo != null
+        //       ? Image.network(
+        //           // 'https://parsefiles.back4app.com/ZuF4FI4dZUN4i9ObIoK6LvTuoIuVFNsVAMRjYNkX/0b28345ecb39e2177d1746f80246ed70_woman2.png',
+        //           _splashController.userModel!.profile!.photo!,
+        //           height: 30,
+        //           width: 30,
+        //           errorBuilder: (_, __, ___) {
+        //             return const Icon(
+        //               Icons.person,
+        //               // color: Colors.black,
+        //             );
+        //           },
+        //         )
+        //       : const Align(
+        //           alignment: Alignment.center,
+        //           child: Text(
+        //             '☠️',
+        //             style: TextStyle(fontSize: 20),
+        //           ),
+        //         ),
+        // ),
       ),
     );
   }

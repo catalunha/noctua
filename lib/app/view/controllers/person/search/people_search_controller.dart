@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:noctua/app/data/b4a/entity/person_entity.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
+import 'package:noctua/app/domain/utils/pagination.dart';
 import 'package:noctua/app/routes.dart';
 import 'package:noctua/app/view/controllers/utils/loader_mixin.dart';
 import 'package:noctua/app/view/controllers/utils/message_mixin.dart';
@@ -108,7 +109,7 @@ class PersonSearchController extends GetxController
       query.whereEqualTo('birthday', selectedDate);
       selectedDate = selectedDate!.add(const Duration(hours: 3));
     }
-    List<PersonModel> temp = await _personUseCase.list(query);
+    List<PersonModel> temp = await _personUseCase.list(Pagination());
 
     personList.addAll([...temp]);
     _loading(false);

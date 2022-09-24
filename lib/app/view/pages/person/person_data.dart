@@ -27,7 +27,7 @@ class PersonData extends StatelessWidget {
             // mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(personModel!.isFemale ? "Homem" : "Mulher"),
+              Text(personModel!.isFemale ? "Mulher" : "Homem"),
               personModel!.photo != null && personModel!.photo!.isNotEmpty
                   ? Image.network(
                       personModel!.photo!,
