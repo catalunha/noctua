@@ -231,9 +231,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       );
     } finally {
       _personList.clear();
-      _changePagination(1, 2);
       _lastPage.value = false;
-
+      _changePagination(1, 2);
       _loading(false);
       Get.back();
     }
@@ -314,8 +313,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       );
     } finally {
       _personList.clear();
-      _changePagination(1, 2);
       _lastPage.value = false;
+      _changePagination(1, 2);
       _loading(false);
       Get.back();
     }
@@ -393,8 +392,8 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       );
     } finally {
       _personList.clear();
-      _changePagination(1, 2);
       _lastPage.value = false;
+      _changePagination(1, 2);
       _loading(false);
       // Get.back();
     }

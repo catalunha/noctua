@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:noctua/app/view/controllers/person/search/people_search_controller.dart';
 import 'package:noctua/app/view/pages/person/parts/person_card.dart';
+import 'package:noctua/app/view/pages/person/parts/person_list2.dart';
 
 class PersonSearchResultPage extends StatelessWidget {
   final PersonSearchController personSearchController = Get.find();
@@ -16,13 +17,28 @@ class PersonSearchResultPage extends StatelessWidget {
         title: Obx(() => Text(
             'Encontrei ${personSearchController.personList.length} pessoas')),
       ),
-      body: Obx(() => SingleChildScrollView(
-            child: Center(
-              child: Column(
-                children: buildPeople(context),
-              ),
-            ),
-          )),
+      body: Column(
+        children: [
+          Obx(() => Divider(
+                color:
+                    personSearchController.lastPage ? Colors.red : Colors.green,
+              )),
+          Expanded(
+            child: Obx(() => PersonList2(
+                  personList: personSearchController.personList,
+                  nextPage: () => personSearchController.nextPage(),
+                  lastPage: personSearchController.lastPage,
+                )),
+          ),
+        ],
+      ),
+      // body: Obx(() => SingleChildScrollView(
+      //       child: Center(
+      //         child: Column(
+      //           children: buildPeople(context),
+      //         ),
+      //       ),
+      //     )),
     );
   }
 

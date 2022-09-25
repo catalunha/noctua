@@ -34,11 +34,20 @@ class HomePage extends StatelessWidget {
           PopMenuButtonPhotoUser(),
         ],
       ),
-      body: Obx(() => PersonList2(
-            personList: _personController.personList,
-            nextPage: () => _personController.nextPage(),
-            lastPage: _personController.lastPage,
-          )),
+      body: Column(
+        children: [
+          Obx(() => Divider(
+                color: _personController.lastPage ? Colors.red : Colors.green,
+              )),
+          Expanded(
+            child: Obx(() => PersonList2(
+                  personList: _personController.personList,
+                  nextPage: () => _personController.nextPage(),
+                  lastPage: _personController.lastPage,
+                )),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _personController.add(),
         child: const Icon(Icons.add),

@@ -58,8 +58,8 @@ class _SearchPageState extends State<PersonSearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => Text(
-            'Buscando em ${widget.personSearchController.peopleCount} registros')),
+        title: const Text('Buscando registro'),
+        // 'Buscando em ${widget.personSearchController.peopleCount} registros')),
       ),
       body: SingleChildScrollView(
         child: Form(

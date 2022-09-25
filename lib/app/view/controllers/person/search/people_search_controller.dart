@@ -21,7 +21,10 @@ class PersonSearchController extends GetxController
   final _message = Rxn<MessageModel>();
 
   List<PersonModel> personList = <PersonModel>[].obs;
-  var peopleCount = 0.obs;
+  // var peopleCount = 0.obs;
+  final _pagination = Pagination().obs;
+  final _lastPage = false.obs;
+  get lastPage => _lastPage.value;
 
   final Rxn<DateTime> _selectedDate = Rxn<DateTime>();
   DateTime? get selectedDate => _selectedDate.value;
@@ -29,17 +32,36 @@ class PersonSearchController extends GetxController
     _selectedDate.value = selectedDate1;
   }
 
+  QueryBuilder<ParseObject> query =
+      QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
   @override
   void onInit() async {
+    personList.clear();
+    _changePagination(1, 2);
+    ever(_pagination, (_) => listAll());
     loaderListener(_loading);
     messageListener(_message);
     super.onInit();
-    await countPeople();
+    // await countPeople();
   }
 
-  Future<void> countPeople() async {
-    print('PersonSearchController -> countPeople ${peopleCount.value}');
+  void _changePagination(int page, int limit) {
+    _pagination.update((val) {
+      val!.page = page;
+      val.limit = limit;
+    });
+    // _pagination(Pagination()
+    //   ..page = page
+    //   ..limit = limit);
+    // _pagination.refresh();
   }
+
+  void nextPage() {
+    _changePagination(_pagination.value.page + 1, _pagination.value.limit);
+  }
+  // Future<void> countPeople() async {
+  //   print('PersonSearchController -> countPeople ${peopleCount.value}');
+  // }
 
   Future<void> search({
     required bool aliasContainsBool,
@@ -68,8 +90,8 @@ class PersonSearchController extends GetxController
   }) async {
     _loading(true);
     personList.clear();
-    QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+    // QueryBuilder<ParseObject> query =
+    //     QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
     if (aliasContainsBool) {
       query.whereContains('alias', aliasContainsString);
     }
@@ -109,11 +131,24 @@ class PersonSearchController extends GetxController
       query.whereEqualTo('birthday', selectedDate);
       selectedDate = selectedDate!.add(const Duration(hours: 3));
     }
-    List<PersonModel> temp = await _personUseCase.list(query, Pagination());
+    // List<PersonModel> temp = await _personUseCase.list(query, Pagination());
 
-    personList.addAll([...temp]);
+    // personList.addAll([...temp]);
+    listAll();
     _loading(false);
     Get.toNamed(Routes.personSearchResult);
+  }
+
+  listAll() async {
+    _loading(true);
+
+    List<PersonModel> temp =
+        await _personUseCase.list(query, _pagination.value);
+    if (temp.isEmpty) {
+      _lastPage.value = true;
+    }
+    personList.addAll(temp);
+    _loading(false);
   }
   /*
 
