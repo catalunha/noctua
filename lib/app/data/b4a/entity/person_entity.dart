@@ -1,3 +1,4 @@
+import 'package:noctua/app/data/b4a/entity/group_entity.dart';
 import 'package:noctua/app/data/b4a/entity/law_entity.dart';
 import 'package:noctua/app/data/b4a/entity/person_image_entity.dart';
 import 'package:noctua/app/data/b4a/entity/user_entity.dart';
@@ -235,56 +236,77 @@ class PersonEntity {
   //   }
   // }
 
-  ParseObject? toParseUpdateRelationLaws(
-      {required String personId,
-      required List<LawModel> modelList,
-      bool add = false}) {
+  ParseObject toParseAddIdsGroups({
+    required String personId,
+    required List<String> addIds,
+  }) {
     final parseObject = ParseObject(PersonEntity.className);
     parseObject.objectId = personId;
-    List<String> itemList = [];
-    if (add) {
-      if (modelList.isEmpty) {
-        parseObject.unset('laws');
-      } else {
-        for (var element in modelList) {
-          if (element.isDeleted == false) {
-            itemList.add(element.id!);
-          }
-        }
-        if (itemList.isNotEmpty) {
-          parseObject.addRelation(
-            'laws',
-            itemList
-                .map((element) =>
-                    ParseObject(LawEntity.className)..objectId = element)
-                .toList(),
-          );
-        }
-      }
-    } else {
-      if (modelList.isEmpty) {
-        parseObject.unset('laws');
-      } else {
-        for (var image in modelList) {
-          if (image.isDeleted == true) {
-            itemList.add(image.id!);
-          }
-        }
-        if (itemList.isNotEmpty) {
-          parseObject.removeRelation(
-              'laws',
-              itemList
-                  .map((element) =>
-                      ParseObject(LawEntity.className)..objectId = element)
-                  .toList());
-        }
-      }
-    }
-    if (modelList.isNotEmpty && itemList.isEmpty) {
-      return null;
-    } else {
-      return parseObject;
-    }
+    // if (addIds.isEmpty) {
+    //   parseObject.unset('groups');
+    // } else {
+    parseObject.addRelation(
+      'groups',
+      addIds
+          .map((element) =>
+              ParseObject(GroupEntity.className)..objectId = element)
+          .toList(),
+    );
+    // }
+
+    // if (addIds.isEmpty) {
+    //   return null;
+    // } else {
+    return parseObject;
+    // }
+  }
+
+  ParseObject toParseRemoveIdsGroups({
+    required String personId,
+    required List<String> removeIds,
+  }) {
+    final parseObject = ParseObject(PersonEntity.className);
+    parseObject.objectId = personId;
+    parseObject.removeRelation(
+      'groups',
+      removeIds
+          .map((element) =>
+              ParseObject(GroupEntity.className)..objectId = element)
+          .toList(),
+    );
+    return parseObject;
+  }
+
+  ParseObject toParseAddIdsLaws({
+    required String personId,
+    required List<String> addIds,
+  }) {
+    final parseObject = ParseObject(PersonEntity.className);
+    parseObject.objectId = personId;
+    parseObject.addRelation(
+      'laws',
+      addIds
+          .map(
+              (element) => ParseObject(LawEntity.className)..objectId = element)
+          .toList(),
+    );
+    return parseObject;
+  }
+
+  ParseObject toParseRemoveIdsLaws({
+    required String personId,
+    required List<String> removeIds,
+  }) {
+    final parseObject = ParseObject(PersonEntity.className);
+    parseObject.objectId = personId;
+    parseObject.removeRelation(
+      'laws',
+      removeIds
+          .map(
+              (element) => ParseObject(LawEntity.className)..objectId = element)
+          .toList(),
+    );
+    return parseObject;
   }
 
   ParseObject? toParseUpdateRelationImages(

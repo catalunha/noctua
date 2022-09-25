@@ -6,6 +6,8 @@ class GroupModel {
   final String name;
   final String? description;
   final bool? isDeleted;
+  bool? isSelected;
+
   GroupModel({
     this.id,
     required this.name,

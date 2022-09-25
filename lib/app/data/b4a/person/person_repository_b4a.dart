@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:noctua/app/data/b4a/entity/group_entity.dart';
 import 'package:noctua/app/data/b4a/entity/law_entity.dart';
 import 'package:noctua/app/data/b4a/entity/person_entity.dart';
 import 'package:noctua/app/data/b4a/entity/person_image_entity.dart';
 import 'package:noctua/app/data/b4a/person/person_repository_exception.dart';
 import 'package:noctua/app/data/repositories/person_repository.dart';
+import 'package:noctua/app/domain/models/group_model.dart';
 import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
@@ -151,6 +153,23 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
   }
 
   @override
+  Future<List<GroupModel>> readRelationGroups(String personId) async {
+    List<GroupModel> list = [];
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject(GroupEntity.className));
+    query.whereRelatedTo('groups', 'Person', personId);
+    final ParseResponse response = await query.query();
+    if (response.success && response.results != null) {
+      list = [
+        ...response.results!
+            .map<GroupModel>((e) => GroupEntity().fromParse(e as ParseObject))
+            .toList()
+      ];
+    }
+    return list;
+  }
+
+  @override
   Future<void> updateRelationImages(
       String personId, List<PersonImageModel> modelList) async {
     final parseObject = PersonEntity().toParseUpdateRelationImages(
@@ -167,17 +186,33 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
 
   @override
   Future<void> updateRelationLaws(
-      String personId, List<LawModel> modelList) async {
-    final parseObject = PersonEntity().toParseUpdateRelationLaws(
-        personId: personId, modelList: modelList, add: true);
-
-    if (parseObject != null) {
+      String personId, List<String> addIds, List<String> removeIds) async {
+    if (addIds.isNotEmpty) {
+      final parseObject =
+          PersonEntity().toParseAddIdsLaws(personId: personId, addIds: addIds);
       await parseObject.save();
     }
-    final parseObject2 = PersonEntity().toParseUpdateRelationLaws(
-        personId: personId, modelList: modelList, add: false);
-    if (parseObject2 != null) {
-      await parseObject2.save();
+
+    if (removeIds.isNotEmpty) {
+      final parseObject = PersonEntity()
+          .toParseRemoveIdsLaws(personId: personId, removeIds: removeIds);
+      await parseObject.save();
+    }
+  }
+
+  @override
+  Future<void> updateRelationGroups(
+      String personId, List<String> addIds, List<String> removeIds) async {
+    if (addIds.isNotEmpty) {
+      final parseObject = PersonEntity()
+          .toParseAddIdsGroups(personId: personId, addIds: addIds);
+      await parseObject.save();
+    }
+
+    if (removeIds.isNotEmpty) {
+      final parseObject = PersonEntity()
+          .toParseRemoveIdsGroups(personId: personId, removeIds: removeIds);
+      await parseObject.save();
     }
   }
 

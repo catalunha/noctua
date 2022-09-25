@@ -1,4 +1,5 @@
 import 'package:noctua/app/data/repositories/person_repository.dart';
+import 'package:noctua/app/domain/models/group_model.dart';
 import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
@@ -37,6 +38,9 @@ class PersonUseCaseImpl implements PersonUseCase {
   @override
   Future<List<LawModel>> readRelationLaws(String personId) async =>
       await _repository.readRelationLaws(personId);
+  @override
+  Future<List<GroupModel>> readRelationGroups(String personId) async =>
+      await _repository.readRelationGroups(personId);
 
   @override
   Future<void> updateRelationImages(
@@ -45,8 +49,12 @@ class PersonUseCaseImpl implements PersonUseCase {
 
   @override
   Future<void> updateRelationLaws(
-          String personId, List<LawModel> modelList) async =>
-      await _repository.updateRelationLaws(personId, modelList);
+          String personId, List<String> addIds, List<String> removeIds) async =>
+      await _repository.updateRelationLaws(personId, addIds, removeIds);
+  @override
+  Future<void> updateRelationGroups(
+          String personId, List<String> addIds, List<String> removeIds) async =>
+      await _repository.updateRelationGroups(personId, addIds, removeIds);
 
   // @override
   // Future<bool> updateRelation(PersonModel model) async =>

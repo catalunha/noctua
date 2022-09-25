@@ -73,7 +73,16 @@ class PersonData extends StatelessWidget {
               Text('Leis (${personModel!.laws?.length.toString() ?? ""}):'),
               Text(
                 personModel!.laws
-                        ?.map((e) => e.description)
+                        ?.map((e) => '${e.name} - ${e.description}')
+                        .toList()
+                        .join('\n') ??
+                    "...",
+                style: AppTheme.textRed18Bold,
+              ),
+              Text('Grupos (${personModel!.groups?.length.toString() ?? ""}):'),
+              Text(
+                personModel!.groups
+                        ?.map((e) => '${e.name} - ${e.description}')
                         .toList()
                         .join('\n') ??
                     "...",

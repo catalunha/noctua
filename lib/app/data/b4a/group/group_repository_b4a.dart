@@ -1,34 +1,33 @@
 import 'package:get/get.dart';
-import 'package:noctua/app/data/b4a/entity/law_entity.dart';
-import 'package:noctua/app/data/repositories/law_repository.dart';
-import 'package:noctua/app/domain/models/law_model.dart';
+import 'package:noctua/app/data/b4a/entity/group_entity.dart';
+import 'package:noctua/app/data/repositories/group_repository.dart';
+import 'package:noctua/app/domain/models/group_model.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
-class LawRepositoryB4a extends GetxService implements LawRepository {
+class GroupRepositoryB4a extends GetxService implements GroupRepository {
   Future<QueryBuilder<ParseObject>> getQueryAll() async {
     QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseObject(LawEntity.className));
+        QueryBuilder<ParseObject>(ParseObject(GroupEntity.className));
     query.whereEqualTo('isDeleted', false);
     query.orderByAscending('name');
-
     return query;
   }
 
   @override
-  Future<List<LawModel>> list() async {
+  Future<List<GroupModel>> list() async {
     QueryBuilder<ParseObject> query;
     query = await getQueryAll();
 
     final ParseResponse response = await query.query();
-    List<LawModel> listTemp = <LawModel>[];
+    List<GroupModel> listTemp = <GroupModel>[];
     if (response.success && response.results != null) {
       for (var element in response.results!) {
         //print((element as ParseObject).objectId);
-        listTemp.add(LawEntity().fromParse(element));
+        listTemp.add(GroupEntity().fromParse(element));
       }
       return listTemp;
     } else {
-      //print('Sem Laws...');
+      //print('Sem Groups...');
       return [];
     }
   }

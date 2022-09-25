@@ -14,15 +14,30 @@ class PersonSearchResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => Text(
-            'Encontrei ${personSearchController.personList.length} pessoas')),
+        title: const Text('Resultado da busca'),
       ),
       body: Column(
         children: [
-          Obx(() => Divider(
-                color:
-                    personSearchController.lastPage ? Colors.red : Colors.green,
-              )),
+          Row(
+            children: [
+              Expanded(
+                child: Obx(() => Divider(
+                      color: personSearchController.lastPage
+                          ? Colors.red
+                          : Colors.green,
+                    )),
+              ),
+              Text(
+                  '${personSearchController.personList.length} buscas listadas'),
+              Expanded(
+                child: Obx(() => Divider(
+                      color: personSearchController.lastPage
+                          ? Colors.red
+                          : Colors.green,
+                    )),
+              ),
+            ],
+          ),
           Expanded(
             child: Obx(() => PersonList2(
                   personList: personSearchController.personList,

@@ -172,7 +172,6 @@ class OperationRepositoryB4a extends GetxService
       String objectId, List<String> modelIdList, bool add) async {
     final parseObject = OperationEntity().toParseUpdateRelationOperators(
         objectId: objectId, modelIdList: modelIdList, add: add);
-    print('parseObject: $parseObject');
     if (parseObject != null) {
       await parseObject.save();
     }

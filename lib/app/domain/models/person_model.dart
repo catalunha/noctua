@@ -23,7 +23,7 @@ class PersonModel {
   final DateTime? birthday;
   final DateTime? contactVisual;
   final List<LawModel>? laws;
-  final List<GroupModel>? group;
+  final List<GroupModel>? groups;
   final List<PersonImageModel>? images;
 
   final bool isArchived;
@@ -61,7 +61,7 @@ class PersonModel {
     this.contactVisual,
     this.laws,
     this.images,
-    this.group,
+    this.groups,
     this.isArchived = false,
     this.isDeleted = false,
     this.isPublic = false,
@@ -82,7 +82,7 @@ class PersonModel {
     DateTime? contactVisual,
     List<LawModel>? laws,
     List<PersonImageModel>? images,
-    List<GroupModel>? group,
+    List<GroupModel>? groups,
     bool? isArchived,
     bool? isDeleted,
     bool? isPublic,
@@ -103,7 +103,7 @@ class PersonModel {
       contactVisual: contactVisual ?? this.contactVisual,
       laws: laws ?? this.laws,
       images: images ?? this.images,
-      group: group ?? this.group,
+      groups: groups ?? groups,
       isArchived: isArchived ?? this.isArchived,
       isDeleted: isDeleted ?? this.isDeleted,
       isPublic: isPublic ?? this.isPublic,
@@ -151,8 +151,8 @@ class PersonModel {
     if (images != null) {
       result.addAll({'images': images!.map((x) => x.toMap()).toList()});
     }
-    if (group != null) {
-      result.addAll({'group': group!.map((x) => x.toMap()).toList()});
+    if (groups != null) {
+      result.addAll({'group': groups!.map((x) => x.toMap()).toList()});
     }
     result.addAll({'isArchived': isArchived});
     result.addAll({'isDeleted': isDeleted});
@@ -189,7 +189,7 @@ class PersonModel {
           ? List<PersonImageModel>.from(
               map['images']?.map((x) => PersonImageModel.fromMap(x)))
           : null,
-      group: map['group'] != null
+      groups: map['group'] != null
           ? List<GroupModel>.from(
               map['group']?.map((x) => GroupModel.fromMap(x)))
           : null,
@@ -206,7 +206,7 @@ class PersonModel {
 
   @override
   String toString() {
-    return 'PersonModel(id: $id, user: $user, isFemale: $isFemale, name: $name, alias: $alias, mother: $mother, photo: $photo, mark: $mark, history: $history, cpf: $cpf, birthday: $birthday, contactVisual: $contactVisual, laws: $laws, images: $images, group: $group, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic, photoByte: $photoByte)';
+    return 'PersonModel(id: $id, user: $user, isFemale: $isFemale, name: $name, alias: $alias, mother: $mother, photo: $photo, mark: $mark, history: $history, cpf: $cpf, birthday: $birthday, contactVisual: $contactVisual, laws: $laws, images: $images, group: $groups, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic, photoByte: $photoByte)';
   }
 
   @override
@@ -228,7 +228,7 @@ class PersonModel {
         other.contactVisual == contactVisual &&
         listEquals(other.laws, laws) &&
         listEquals(other.images, images) &&
-        listEquals(other.group, group) &&
+        listEquals(other.groups, groups) &&
         other.isArchived == isArchived &&
         other.isDeleted == isDeleted &&
         other.isPublic == isPublic &&
@@ -251,7 +251,7 @@ class PersonModel {
         contactVisual.hashCode ^
         laws.hashCode ^
         images.hashCode ^
-        group.hashCode ^
+        groups.hashCode ^
         isArchived.hashCode ^
         isDeleted.hashCode ^
         isPublic.hashCode ^

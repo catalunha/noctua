@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:noctua/app/domain/models/law_model.dart';
+import 'package:noctua/app/domain/models/group_model.dart';
 import 'package:noctua/app/view/controllers/person/person_controller.dart';
 import 'package:noctua/app/view/pages/utils/app_icon.dart';
 import 'package:noctua/app/view/pages/utils/app_theme.dart';
 
-class PersonAddEditLaw extends StatefulWidget {
+class PersonAddEditGroup extends StatefulWidget {
   final PersonController _personController = Get.find();
 
-  PersonAddEditLaw({Key? key}) : super(key: key);
+  PersonAddEditGroup({Key? key}) : super(key: key);
 
   @override
-  State<PersonAddEditLaw> createState() => _PersonAddEditLawState();
+  State<PersonAddEditGroup> createState() => _PersonAddEditGroupState();
 }
 
-class _PersonAddEditLawState extends State<PersonAddEditLaw> {
+class _PersonAddEditGroupState extends State<PersonAddEditGroup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gerenciar leis para')),
+      appBar: AppBar(title: const Text('Gerenciar grupos para')),
       body: SingleChildScrollView(
         child: Center(
           child: Obx(
@@ -31,8 +31,9 @@ class _PersonAddEditLawState extends State<PersonAddEditLaw> {
                   style: AppTheme.textRed18Bold,
                 ),
                 const SizedBox(height: 5),
-                Text('Em Leis ${widget._personController.laws.length} atuais:'),
-                ...widget._personController.laws
+                Text(
+                    'Em Grupos ${widget._personController.groups.length} atuais:'),
+                ...widget._personController.groups
                     .map((e) => groupWidget(e))
                     .toList(),
               ],
@@ -42,29 +43,29 @@ class _PersonAddEditLawState extends State<PersonAddEditLaw> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          widget._personController.onAddDeletelaw();
+          widget._personController.onAddDeleteGroup();
         },
         child: const Icon(AppIconData.saveInCloud),
       ),
     );
   }
 
-  Widget groupWidget(LawModel model) {
+  Widget groupWidget(GroupModel group) {
     return Obx(() => ListTile(
-          tileColor: (widget._personController.actualIds.contains(model.id) ||
-                      widget._personController.addedIds.contains(model.id)) &&
-                  !widget._personController.removedIds.contains(model.id)
+          tileColor: (widget._personController.actualIds.contains(group.id) ||
+                      widget._personController.addedIds.contains(group.id)) &&
+                  !widget._personController.removedIds.contains(group.id)
               ? Colors.blueAccent
               : null,
-          title: Text(model.name),
-          subtitle: Text(model.description ?? "..."),
+          title: Text(group.name),
+          subtitle: Text(group.description ?? "..."),
           trailing: IconButton(
             onPressed: () {
-              widget._personController.onUpdateGroupIdInList(model.id!);
+              widget._personController.onUpdateGroupIdInList(group.id!);
             },
-            icon: (widget._personController.actualIds.contains(model.id) ||
-                        widget._personController.addedIds.contains(model.id)) &&
-                    !widget._personController.removedIds.contains(model.id)
+            icon: (widget._personController.actualIds.contains(group.id) ||
+                        widget._personController.addedIds.contains(group.id)) &&
+                    !widget._personController.removedIds.contains(group.id)
                 ? const Icon(Icons.check_box)
                 : const Icon(Icons.check_box_outline_blank),
           ),

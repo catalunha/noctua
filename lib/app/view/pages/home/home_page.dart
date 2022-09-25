@@ -36,9 +36,26 @@ class HomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Obx(() => Divider(
-                color: _personController.lastPage ? Colors.red : Colors.green,
-              )),
+          Row(
+            children: [
+              Expanded(
+                child: Obx(() => Divider(
+                      color: _personController.lastPage
+                          ? Colors.red
+                          : Colors.green,
+                    )),
+              ),
+              Obx(() => Text(
+                  '${_personController.personList.length} registros listados')),
+              Expanded(
+                child: Obx(() => Divider(
+                      color: _personController.lastPage
+                          ? Colors.red
+                          : Colors.green,
+                    )),
+              ),
+            ],
+          ),
           Expanded(
             child: Obx(() => PersonList2(
                   personList: _personController.personList,

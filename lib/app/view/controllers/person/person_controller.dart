@@ -5,10 +5,12 @@ import 'package:noctua/app/data/b4a/entity/person_entity.dart';
 import 'package:noctua/app/data/b4a/entity/person_image_entity.dart';
 import 'package:noctua/app/data/b4a/person/person_repository_exception.dart';
 import 'package:noctua/app/data/b4a/person_image/person_image_repository_exception.dart';
+import 'package:noctua/app/domain/models/group_model.dart';
 import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_image_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
 import 'package:noctua/app/domain/models/user_model.dart';
+import 'package:noctua/app/domain/usecases/group/group_usecase.dart';
 import 'package:noctua/app/domain/usecases/law/law_usecase.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
 import 'package:noctua/app/domain/usecases/person_image/person_image_usecase.dart';
@@ -24,13 +26,16 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final PersonUseCase _personUseCase;
   final PersonImageUseCase _personImageUseCase;
   final LawUseCase _lawUseCase;
+  final GroupUseCase _groupUseCase;
 
   PersonController({
     required PersonUseCase personUseCase,
     required PersonImageUseCase personImageUseCase,
     required LawUseCase lawUseCase,
+    required GroupUseCase groupUseCase,
   })  : _personUseCase = personUseCase,
         _personImageUseCase = personImageUseCase,
+        _groupUseCase = groupUseCase,
         _lawUseCase = lawUseCase;
 
   final _loading = false.obs;
@@ -44,9 +49,15 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   get lastPage => _lastPage.value;
 
   var personImageList = <PersonImageModel>[].obs;
+  // List<LawModel> lawStatusList = [];
+  // List<GroupModel> groupStatusList = [];
 
-  var allLaws = <LawModel>[].obs;
-  var lawIdSelectedList = <String>[].obs;
+  var laws = <LawModel>[].obs;
+  // var lawIdSelectedList = <String>[].obs;
+  var groups = <GroupModel>[].obs;
+  var addedIds = <String>[].obs;
+  var removedIds = <String>[].obs;
+  var actualIds = <String>[].obs;
 
   final _person = Rxn<PersonModel>();
   PersonModel? get person => _person.value;
@@ -247,65 +258,98 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         await _personUseCase.readRelationImages(personModel.id!);
     List<LawModel> laws =
         await _personUseCase.readRelationLaws(personModel.id!);
-    _person.value = _person.value!.copyWith(images: images, laws: laws);
+    List<GroupModel> groups =
+        await _personUseCase.readRelationGroups(personModel.id!);
+    _person.value =
+        _person.value!.copyWith(images: images, laws: laws, groups: groups);
     _person.refresh();
     Get.toNamed(Routes.personData, arguments: _person.value);
   }
 
-  List<LawModel> lawListSaved = [];
-  void addDeleteLaw(PersonModel personModel) async {
-    // var phraseTemp = _personList.firstWhere((element) => element.id == id);
-    // _person(phraseTemp);
+  void addDeleteGroup(PersonModel personModel) async {
     _person(personModel);
 
-    lawListSaved.clear();
-    lawListSaved = await _personUseCase.readRelationLaws(personModel.id!);
-
-    List<LawModel> allLawsTemp = await _lawUseCase.list();
-    allLaws(allLawsTemp);
-    lawIdSelectedList.clear();
-    for (var element in lawListSaved) {
-      lawIdSelectedList.add(element.id!);
+    actualIds.clear();
+    addedIds.clear();
+    removedIds.clear();
+    List<GroupModel> actual =
+        await _personUseCase.readRelationGroups(personModel.id!);
+    for (var element in actual) {
+      actualIds.add(element.id!);
     }
-    Get.toNamed(Routes.personAddEditLaw);
+    List<GroupModel> all = await _groupUseCase.list();
+    groups(all);
+    Get.toNamed(Routes.personAddEditGroup);
   }
 
-  onUpdateLawIdSelectedList(String lawId) {
-    if (lawIdSelectedList.contains(lawId)) {
-      lawIdSelectedList.remove(lawId);
-    } else {
-      lawIdSelectedList.add(lawId);
+  onUpdateGroupIdInList(String id) {
+    print(id);
+    print('actualIdsGroups: $actualIds');
+    print('addedIdsGroups: $addedIds');
+    print('removedIdsGroups: $removedIds');
+    if (!actualIds.contains(id)) {
+      print('add...');
+      if (addedIds.contains(id)) {
+        addedIds.remove(id);
+      } else {
+        addedIds.add(id);
+      }
     }
+    if (actualIds.contains(id)) {
+      if (removedIds.contains(id)) {
+        removedIds.remove(id);
+      } else {
+        removedIds.add(id);
+      }
+    }
+
+    print('actualIdsGroups: $actualIds');
+    print('addedIdsGroups: $addedIds');
+    print('removedIdsGroups: $removedIds');
+  }
+
+  void onAddDeleteGroup() async {
+    try {
+      _loading(true);
+      await _personUseCase.updateRelationGroups(
+          person!.id!, addedIds, removedIds);
+    } catch (e) {
+      _message.value = MessageModel(
+        title: 'Erro',
+        message: 'Não foi possivel atualizar este grupos',
+        isError: true,
+      );
+    } finally {
+      _personList.clear();
+      _lastPage.value = false;
+      _changePagination(1, 2);
+      _loading(false);
+      Get.back();
+    }
+  }
+
+  void addDeleteLaw(PersonModel personModel) async {
+    _person(personModel);
+
+    actualIds.clear();
+    addedIds.clear();
+    removedIds.clear();
+    List<LawModel> actual =
+        await _personUseCase.readRelationLaws(personModel.id!);
+    for (var element in actual) {
+      actualIds.add(element.id!);
+    }
+    List<LawModel> all = await _lawUseCase.list();
+    laws(all);
+    Get.toNamed(Routes.personAddEditLaw);
   }
 
   void onAddDeletelaw() async {
     try {
       _loading(true);
-      List<LawModel> lawsOld = [...lawListSaved];
-      List<LawModel> lawsNew = [];
-      List<String> lawIdSelectedListUpdated = [...lawIdSelectedList];
-      // laws.removeWhere((element) => !lawIdSelectedList.contains(element.id));
-      for (var law in lawsOld) {
-        if (lawIdSelectedList.contains(law.id)) {
-          // lawsNew.add(law);
-          lawIdSelectedListUpdated.remove(law.id);
-        } else {
-          lawsNew.add(law.copyWith(isDeleted: true));
-        }
-      }
-      for (var lawUpdated in lawIdSelectedListUpdated) {
-        lawsNew.add(allLaws
-            .firstWhere((e) => e.id == lawUpdated)
-            .copyWith(isDeleted: false));
-      }
-      // PersonModel personModel = _person.value!.copyWith(laws: lawsNew);
-      // _person.refresh();
-      if (lawsNew.isNotEmpty) {
-        await _personUseCase.updateRelationLaws(person!.id!, lawsNew);
-      }
+      await _personUseCase.updateRelationLaws(
+          person!.id!, addedIds, removedIds);
     } catch (e) {
-      //print('====================');
-      //print(e);
       _message.value = MessageModel(
         title: 'Erro',
         message: 'Não foi possivel atualizar leis',

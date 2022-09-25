@@ -82,12 +82,16 @@ class PersonCard extends StatelessWidget {
                 icon: const Icon(Icons.art_track),
               ),
               IconButton(
-                onPressed: () => _personController.addDeleteImage(personModel),
-                icon: const Icon(Icons.photo_library_rounded),
+                onPressed: () => _personController.addDeleteGroup(personModel),
+                icon: const Icon(Icons.groups),
               ),
               IconButton(
                 onPressed: () => _personController.addDeleteLaw(personModel),
                 icon: const Icon(Icons.crop_sharp),
+              ),
+              IconButton(
+                onPressed: () => _personController.addDeleteImage(personModel),
+                icon: const Icon(Icons.photo_library_rounded),
               ),
             ],
           )

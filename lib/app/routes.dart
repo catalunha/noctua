@@ -16,6 +16,7 @@ import 'package:noctua/app/view/pages/operation/operation_operators_page.dart';
 import 'package:noctua/app/view/pages/operation/operation_addedit_page.dart';
 import 'package:noctua/app/view/pages/operation/operation_page.dart';
 import 'package:noctua/app/view/pages/person/parts/image_get_crop.dart';
+import 'package:noctua/app/view/pages/person/person_addedit_group.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_image.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_law.dart';
 import 'package:noctua/app/view/pages/person/person_addedit_page.dart';
@@ -36,6 +37,7 @@ class Routes {
   static const personAddEdit = '/person/addedit';
   static const personAddEditImage = '/person/addedit/image';
   static const personAddEditLaw = '/person/addedit/law';
+  static const personAddEditGroup = '/person/addedit/group';
   static const personAddPhoto = '/person/add/photo';
   static const personData = '/person/data';
   static const personSearch = '/person/search';
@@ -91,6 +93,10 @@ class Routes {
     GetPage(
       name: Routes.personAddEditLaw,
       page: () => PersonAddEditLaw(),
+    ),
+    GetPage(
+      name: Routes.personAddEditGroup,
+      page: () => PersonAddEditGroup(),
     ),
     GetPage(
       name: Routes.personSearch,

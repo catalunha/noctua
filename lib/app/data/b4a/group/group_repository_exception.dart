@@ -1,7 +1,7 @@
-class LawRepositoryException implements Exception {
+class GroupRepositoryException implements Exception {
   final int code;
   final String message;
-  LawRepositoryException({
+  GroupRepositoryException({
     required this.code,
     required this.message,
   });
