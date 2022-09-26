@@ -203,7 +203,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
         alias: PersonModel.onTextSplit(alias),
         mother: mother,
         history: history,
-        mark: mark,
+        marks: mark,
         isArchived: isArchived,
         isPublic: isPublic,
         isDeleted: isDeleted,
@@ -422,11 +422,11 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
           isDeleted: false,
         );
         // List<PersonImageModel> images = person!.images!;
-        personImageList.add(personImageModel);
         // PersonModel personModel = _person.value!.copyWith(images: images);
         // _person.refresh();
-        await _personUseCase
-            .updateRelationImages(person!.id!, [personImageModel]);
+        await _personUseCase.updateRelationImages(
+            person!.id!, personImageId, true);
+        personImageList.add(personImageModel);
       }
     } on PersonImageRepositoryException {
       _message.value = MessageModel(
@@ -455,12 +455,11 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
       // PersonImageModel modelTemp = model.copyWith(isDeleted: true);
       // _person.value!.images!.add(modelTemp);
       // List<PersonImageModel> images = [...person!.images!];
-      PersonImageModel model =
-          personImageList.firstWhere((e) => e.id == objectImageId);
+      // PersonImageModel model =
+      //     personImageList.firstWhere((e) => e.id == objectImageId);
       // int id = personImageList.indexWhere((e) => e.id == objectImageId);
       //print('atualizando: ${model.id}');
-      PersonImageModel modelTemp = model.copyWith(isDeleted: true);
-      personImageList.removeWhere((e) => e.id == objectImageId);
+      // PersonImageModel modelTemp = model.copyWith(isDeleted: true);
       // personImageList.fillRange(id, id + 1, modelTemp);
       // personImageList.removeWhere((e) => e.id == objectImageId);
       // personImageList.add(modelTemp);
@@ -473,7 +472,9 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
 
       // //print(person!.images!.length);
       // //print(_person.value!.images!.length);
-      await _personUseCase.updateRelationImages(person!.id!, [modelTemp]);
+      await _personUseCase.updateRelationImages(
+          person!.id!, objectImageId, false);
+      personImageList.removeWhere((e) => e.id == objectImageId);
     } catch (e) {
       _message.value = MessageModel(
         title: 'Erro',

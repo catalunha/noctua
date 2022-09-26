@@ -17,7 +17,6 @@ abstract class PersonUseCase {
   Future<void> updateRelationLaws(
       String personId, List<String> addIds, List<String> removeIds);
   Future<List<PersonImageModel>> readRelationImages(String personId);
-  Future<void> updateRelationImages(
-      String personId, List<PersonImageModel> modelList);
+  Future<void> updateRelationImages(String personId, String imageId, bool add);
   Future<PersonModel?> read(String id);
 }

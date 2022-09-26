@@ -38,7 +38,7 @@ class _PhraseAddEditPageState extends State<PhraseAddEditPage> {
     _historyTEC.text = widget._personController.person?.history ?? '';
     _motherTEC.text = widget._personController.person?.mother ?? '';
     _aliasTEC.text = widget._personController.person?.alias?.join(', ') ?? '';
-    _markTEC.text = widget._personController.person?.mark ?? '';
+    _markTEC.text = widget._personController.person?.marks ?? '';
     _isMale = widget._personController.person?.isFemale ?? true;
     _isArchived = widget._personController.person?.isArchived ?? false;
     _isPublic = widget._personController.person?.isPublic ?? false;

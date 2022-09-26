@@ -58,7 +58,7 @@ class PersonCard extends StatelessWidget {
                     Text('Alias: ${personModel.alias?.join(",")}'),
                     Text('Mae: ${personModel.mother}'),
                     Text('CPF: ${personModel.cpf}'),
-                    Text('Marcas: ${personModel.mark}'),
+                    Text('Marcas: ${personModel.marks}'),
                     // Text('DataNasc: ${e.birthday?.toIso8601String()}'),
                     Text(
                         'DataNasc: ${personModel.birthday != null ? formatter.format(personModel.birthday!) : "..."}'),

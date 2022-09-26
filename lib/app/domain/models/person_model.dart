@@ -17,7 +17,7 @@ class PersonModel {
   final List<String>? alias;
   final String? mother;
   final String? photo;
-  final String? mark;
+  final String? marks;
   final String? history;
   final String? cpf;
   final DateTime? birthday;
@@ -54,7 +54,7 @@ class PersonModel {
     this.alias,
     this.mother,
     this.photo,
-    this.mark,
+    this.marks,
     this.history,
     this.cpf,
     this.birthday,
@@ -96,7 +96,7 @@ class PersonModel {
       alias: alias ?? this.alias,
       mother: mother ?? this.mother,
       photo: photo ?? this.photo,
-      mark: mark ?? this.mark,
+      marks: mark ?? marks,
       history: history ?? this.history,
       cpf: cpf ?? this.cpf,
       birthday: birthday ?? this.birthday,
@@ -130,8 +130,8 @@ class PersonModel {
     if (photo != null) {
       result.addAll({'photo': photo});
     }
-    if (mark != null) {
-      result.addAll({'mark': mark});
+    if (marks != null) {
+      result.addAll({'mark': marks});
     }
     if (history != null) {
       result.addAll({'history': history});
@@ -173,7 +173,7 @@ class PersonModel {
       alias: List<String>.from(map['alias']),
       mother: map['mother'],
       photo: map['photo'],
-      mark: map['mark'],
+      marks: map['mark'],
       history: map['history'],
       cpf: map['cpf'],
       birthday: map['birthday'] != null
@@ -206,7 +206,7 @@ class PersonModel {
 
   @override
   String toString() {
-    return 'PersonModel(id: $id, user: $user, isFemale: $isFemale, name: $name, alias: $alias, mother: $mother, photo: $photo, mark: $mark, history: $history, cpf: $cpf, birthday: $birthday, contactVisual: $contactVisual, laws: $laws, images: $images, group: $groups, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic, photoByte: $photoByte)';
+    return 'PersonModel(id: $id, user: $user, isFemale: $isFemale, name: $name, alias: $alias, mother: $mother, photo: $photo, mark: $marks, history: $history, cpf: $cpf, birthday: $birthday, contactVisual: $contactVisual, laws: $laws, images: $images, group: $groups, isArchived: $isArchived, isDeleted: $isDeleted, isPublic: $isPublic, photoByte: $photoByte)';
   }
 
   @override
@@ -221,7 +221,7 @@ class PersonModel {
         listEquals(other.alias, alias) &&
         other.mother == mother &&
         other.photo == photo &&
-        other.mark == mark &&
+        other.marks == marks &&
         other.history == history &&
         other.cpf == cpf &&
         other.birthday == birthday &&
@@ -244,7 +244,7 @@ class PersonModel {
         alias.hashCode ^
         mother.hashCode ^
         photo.hashCode ^
-        mark.hashCode ^
+        marks.hashCode ^
         history.hashCode ^
         cpf.hashCode ^
         birthday.hashCode ^

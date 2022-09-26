@@ -90,7 +90,7 @@ class _ImageViewAddState extends State<ImageViewAdd> {
         ),
         child: const Center(
           child: Text(
-            'Click aqui para buscar nova imagem',
+            'Click aqui para buscar nova imagem. Para depois enviar!',
             textAlign: TextAlign.center,
           ),
         ),

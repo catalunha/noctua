@@ -41,8 +41,21 @@ class _OperationInvolvedsState extends State<OperationInvolveds> {
                     );
                   },
                 ),
-              const Divider(
-                color: Colors.green,
+              Row(
+                children: [
+                  const Expanded(
+                    child: Divider(
+                      color: Colors.red,
+                    ),
+                  ),
+                  Obx(() => Text(
+                      '${widget.operationController.involvedsList.length} registros listados')),
+                  const Expanded(
+                    child: Divider(
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
               ),
               SingleChildScrollView(
                 child: Column(children: [

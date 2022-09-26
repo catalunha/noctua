@@ -171,16 +171,15 @@ class PersonRepositoryB4a extends GetxService implements PersonRepository {
 
   @override
   Future<void> updateRelationImages(
-      String personId, List<PersonImageModel> modelList) async {
-    final parseObject = PersonEntity().toParseUpdateRelationImages(
-        personId: personId, modelList: modelList, add: true);
-    if (parseObject != null) {
+      String personId, String imageId, bool add) async {
+    if (add) {
+      final parseObject = PersonEntity()
+          .toParseAddIdImages(personId: personId, imageId: imageId, add: true);
       await parseObject.save();
-    }
-    final parseObject2 = PersonEntity().toParseUpdateRelationImages(
-        personId: personId, modelList: modelList, add: false);
-    if (parseObject2 != null) {
-      await parseObject2.save();
+    } else {
+      final parseObject = PersonEntity()
+          .toParseAddIdImages(personId: personId, imageId: imageId, add: false);
+      await parseObject.save();
     }
   }
 

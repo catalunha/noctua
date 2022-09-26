@@ -32,8 +32,7 @@ class _OperationOperatorsState extends State<OperationOperators> {
               const SizedBox(height: 5),
               if (widget.operationController.operationIsUser())
                 ElevatedButton(
-                  child: Text(
-                      'Adicionar operador aos ${widget.operationController.operatorsList.length} atuais'),
+                  child: const Text('Adicionar operador'),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -41,8 +40,21 @@ class _OperationOperatorsState extends State<OperationOperators> {
                     );
                   },
                 ),
-              const Divider(
-                color: Colors.green,
+              Row(
+                children: [
+                  const Expanded(
+                    child: Divider(
+                      color: Colors.red,
+                    ),
+                  ),
+                  Obx(() => Text(
+                      '${widget.operationController.operatorsList.length} registros listados')),
+                  const Expanded(
+                    child: Divider(
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
               ),
               // Text(
               //     'Operadores atuais (${widget.operationController.operatorsList.length}):'),

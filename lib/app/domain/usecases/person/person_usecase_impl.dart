@@ -44,8 +44,8 @@ class PersonUseCaseImpl implements PersonUseCase {
 
   @override
   Future<void> updateRelationImages(
-          String personId, List<PersonImageModel> modelList) async =>
-      await _repository.updateRelationImages(personId, modelList);
+          String personId, String imageId, bool add) async =>
+      await _repository.updateRelationImages(personId, imageId, add);
 
   @override
   Future<void> updateRelationLaws(

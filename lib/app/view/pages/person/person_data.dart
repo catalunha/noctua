@@ -62,7 +62,7 @@ class PersonData extends StatelessWidget {
               ),
               const Text('Caracteristicas:'),
               Text(
-                personModel!.mark ?? "...",
+                personModel!.marks ?? "...",
                 style: AppTheme.textRed18Bold,
               ),
               const Text('Historico:'),
