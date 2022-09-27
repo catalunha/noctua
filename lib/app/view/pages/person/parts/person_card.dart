@@ -54,6 +54,7 @@ class PersonCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text('id: ${personModel.id}'),
                     Text('Nome: ${personModel.name}'),
                     Text('Alias: ${personModel.alias?.join(",")}'),
                     Text('Mae: ${personModel.mother}'),

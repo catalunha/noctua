@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:noctua/app/domain/models/group_law_abs.dart';
 
-class AppDropDownGeneric extends StatelessWidget {
+class AppDropDownGeneric<T extends GroupLawAbs> extends StatelessWidget {
   final String? title;
   final bool enabled;
-  final List<dynamic> options;
-  final dynamic selected;
-  final Function(dynamic) execute;
+  final List<T> options;
+  final T? selected;
+  final Function(T?) execute;
   final double height;
   final double width;
   const AppDropDownGeneric({
@@ -34,7 +35,7 @@ class AppDropDownGeneric extends StatelessWidget {
                   border: Border.all(style: BorderStyle.solid, width: 0.80),
                 ),
                 child: Center(
-                  child: DropdownButton<dynamic>(
+                  child: DropdownButton<T>(
                     value: selected,
                     icon: const Icon(Icons.arrow_downward),
                     underline: Container(
@@ -42,14 +43,13 @@ class AppDropDownGeneric extends StatelessWidget {
                       color: Colors.deepPurpleAccent,
                     ),
                     borderRadius: BorderRadius.circular(10),
-                    onChanged: (dynamic newValue) {
+                    onChanged: (T? newValue) {
                       execute(newValue);
                     },
-                    items:
-                        options.map<DropdownMenuItem<dynamic>>((dynamic value) {
-                      return DropdownMenuItem<dynamic>(
+                    items: options.map<DropdownMenuItem<T>>((T value) {
+                      return DropdownMenuItem<T>(
                         value: value,
-                        child: Text('${value?.name}'),
+                        child: Text(value.name),
                         // child: Text('${value!.name} - ${value.description}'),
                       );
                     }).toList(),

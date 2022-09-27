@@ -3,15 +3,12 @@ abstract class GroupLawAbs {
   final String name;
   final String? description;
   final bool? isDeleted;
-
-  GroupLawAbs(
+  GroupLawAbs({
     this.id,
-    this.name,
+    required this.name,
     this.description,
     this.isDeleted,
-  );
-
-  // GroupLawAbs(this.id, this.name, this.description, this.isDeleted);
+  });
 
   @override
   String toString() {

@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:noctua/app/data/b4a/entity/group_entity.dart';
+import 'package:noctua/app/data/b4a/entity/law_entity.dart';
 import 'package:noctua/app/data/b4a/entity/person_entity.dart';
 import 'package:noctua/app/domain/models/group_model.dart';
 import 'package:noctua/app/domain/models/law_model.dart';
@@ -116,6 +118,8 @@ class PersonSearchController extends GetxController
     required bool markContains3Bool,
     required String markContains3String,
     required bool birthdayBool,
+    required bool groupEqualToBool,
+    required GroupModel? groupSelected,
     required bool lawEqualToBool,
     required LawModel? lawSelected,
   }) async {
@@ -162,11 +166,17 @@ class PersonSearchController extends GetxController
       query.whereEqualTo('birthday', selectedDate);
       selectedDate = selectedDate!.add(const Duration(hours: 3));
     }
+    if (groupEqualToBool && groupSelected != null) {
+      final parseObject = ParseObject(GroupEntity.className);
+      parseObject.objectId = groupSelected.id;
+      // query.whereEqualTo('groups', parseObject);
+      query.whereContainedIn('groups', [parseObject]);
+    }
     if (lawEqualToBool && lawSelected != null) {
-      print('==>${lawSelected.id}');
-      final parseObject = ParseObject(PersonEntity.className);
+      final parseObject = ParseObject(LawEntity.className);
       parseObject.objectId = lawSelected.id;
-      query.whereEqualTo('laws', parseObject);
+      // query.whereEqualTo('laws', parseObject);
+      query.whereContainedIn('laws', [parseObject]);
     }
     // List<PersonModel> temp = await _personUseCase.list(query, Pagination());
 
