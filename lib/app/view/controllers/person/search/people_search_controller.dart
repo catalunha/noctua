@@ -1,6 +1,10 @@
 import 'package:get/get.dart';
 import 'package:noctua/app/data/b4a/entity/person_entity.dart';
+import 'package:noctua/app/domain/models/group_model.dart';
+import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/domain/models/person_model.dart';
+import 'package:noctua/app/domain/usecases/group/group_usecase.dart';
+import 'package:noctua/app/domain/usecases/law/law_usecase.dart';
 import 'package:noctua/app/domain/usecases/person/person_usecase.dart';
 import 'package:noctua/app/domain/utils/pagination.dart';
 import 'package:noctua/app/routes.dart';
@@ -11,10 +15,15 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 class PersonSearchController extends GetxController
     with LoaderMixin, MessageMixin {
   final PersonUseCase _personUseCase;
-
+  final LawUseCase _lawUseCase;
+  final GroupUseCase _groupUseCase;
   PersonSearchController({
     required PersonUseCase personUseCase,
-  }) : _personUseCase = personUseCase;
+    required LawUseCase lawUseCase,
+    required GroupUseCase groupUseCase,
+  })  : _personUseCase = personUseCase,
+        _groupUseCase = groupUseCase,
+        _lawUseCase = lawUseCase;
 
   final _loading = false.obs;
   set loading(bool value) => _loading(value);
@@ -34,6 +43,10 @@ class PersonSearchController extends GetxController
 
   QueryBuilder<ParseObject> query =
       QueryBuilder<ParseObject>(ParseObject(PersonEntity.className));
+
+  var groups = <GroupModel>[].obs;
+  var laws = <LawModel>[].obs;
+
   @override
   void onInit() async {
     personList.clear();
@@ -41,8 +54,24 @@ class PersonSearchController extends GetxController
     ever(_pagination, (_) => listAll());
     loaderListener(_loading);
     messageListener(_message);
+    await getGroups();
+    await getLaws();
     super.onInit();
     // await countPeople();
+  }
+
+  Future<void> getGroups() async {
+    List<GroupModel> all = await _groupUseCase.list();
+    groups(all);
+    print('getGroups');
+    print(groups.map((e) => e.id!).toList());
+  }
+
+  Future<void> getLaws() async {
+    List<LawModel> all = await _lawUseCase.list();
+    laws(all);
+    print('getLaws');
+    print(laws.map((e) => e.id!).toList());
   }
 
   void _changePagination(int page, int limit) {
@@ -87,6 +116,8 @@ class PersonSearchController extends GetxController
     required bool markContains3Bool,
     required String markContains3String,
     required bool birthdayBool,
+    required bool lawEqualToBool,
+    required LawModel? lawSelected,
   }) async {
     _loading(true);
     personList.clear();
@@ -130,6 +161,12 @@ class PersonSearchController extends GetxController
       selectedDate = selectedDate!.subtract(const Duration(hours: 3));
       query.whereEqualTo('birthday', selectedDate);
       selectedDate = selectedDate!.add(const Duration(hours: 3));
+    }
+    if (lawEqualToBool && lawSelected != null) {
+      print('==>${lawSelected.id}');
+      final parseObject = ParseObject(PersonEntity.className);
+      parseObject.objectId = lawSelected.id;
+      query.whereEqualTo('laws', parseObject);
     }
     // List<PersonModel> temp = await _personUseCase.list(query, Pagination());
 

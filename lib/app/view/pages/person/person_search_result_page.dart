@@ -27,8 +27,8 @@ class PersonSearchResultPage extends StatelessWidget {
                           : Colors.green,
                     )),
               ),
-              Text(
-                  '${personSearchController.personList.length} buscas listadas'),
+              Obx(() => Text(
+                  '${personSearchController.personList.length} buscas listadas')),
               Expanded(
                 child: Obx(() => Divider(
                       color: personSearchController.lastPage

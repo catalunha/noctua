@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppDropDown extends StatelessWidget {
+class AppDropDownGeneric extends StatelessWidget {
   final String? title;
   final bool enabled;
   final List<dynamic> options;
@@ -8,7 +8,7 @@ class AppDropDown extends StatelessWidget {
   final Function(dynamic) execute;
   final double height;
   final double width;
-  const AppDropDown({
+  const AppDropDownGeneric({
     Key? key,
     this.title,
     this.enabled = true,

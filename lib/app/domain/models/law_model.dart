@@ -6,7 +6,6 @@ class LawModel {
   final String name;
   final String? description;
   final bool? isDeleted;
-  bool? isSelected;
 
   LawModel({
     this.id,

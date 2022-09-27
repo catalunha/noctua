@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:noctua/app/domain/models/group_model.dart';
+import 'package:noctua/app/domain/models/law_model.dart';
 import 'package:noctua/app/view/controllers/person/search/people_search_controller.dart';
 import 'package:noctua/app/view/pages/person/parts/calendar2_button.dart';
+import 'package:noctua/app/view/pages/utils/app_dropdown.dart';
 import 'package:noctua/app/view/pages/utils/app_icon.dart';
 import 'package:noctua/app/view/pages/utils/app_textformfield.dart';
 
@@ -27,6 +30,8 @@ class _SearchPageState extends State<PersonSearchPage> {
   bool _markContains2 = false;
   bool _markContains3 = false;
   bool _birthday = false;
+  bool _lawEqualTo = false;
+  bool _groupEqualTo = false;
   final _aliasContainsTEC = TextEditingController();
   final _aliasEqualToTEC = TextEditingController();
   final _nameContainsTEC = TextEditingController();
@@ -38,9 +43,11 @@ class _SearchPageState extends State<PersonSearchPage> {
   final _markContainsTEC = TextEditingController();
   final _markContains2TEC = TextEditingController();
   final _markContains3TEC = TextEditingController();
+  LawModel? lawSelected;
+  GroupModel? groupSelected;
+
   @override
   void initState() {
-    super.initState();
     _aliasContainsTEC.text = '';
     _aliasEqualToTEC.text = '';
     _nameContainsTEC.text = '';
@@ -52,6 +59,7 @@ class _SearchPageState extends State<PersonSearchPage> {
     _markContainsTEC.text = '';
     _markContains2TEC.text = '';
     _markContains3TEC.text = '';
+    super.initState();
   }
 
   @override
@@ -321,6 +329,68 @@ class _SearchPageState extends State<PersonSearchPage> {
                   ],
                 ),
               ),
+              Card(
+                child: Column(
+                  children: [
+                    const Text('campo Lei'),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _lawEqualTo,
+                          onChanged: (value) {
+                            setState(() {
+                              _lawEqualTo = value!;
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: Obx(() => AppDropDown(
+                                options:
+                                    widget.personSearchController.laws.toList(),
+                                selected: lawSelected,
+                                execute: (value) {
+                                  lawSelected = value;
+                                  setState(() {});
+                                },
+                                width: 150,
+                              )),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  children: [
+                    const Text('campo Grupo'),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _groupEqualTo,
+                          onChanged: (value) {
+                            setState(() {
+                              _groupEqualTo = value!;
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: Obx(() => AppDropDown(
+                                options: widget.personSearchController.groups
+                                    .toList(),
+                                selected: groupSelected,
+                                execute: (value) {
+                                  groupSelected = value;
+                                  setState(() {});
+                                },
+                                width: 150,
+                              )),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 100)
             ],
           ),
@@ -333,30 +403,31 @@ class _SearchPageState extends State<PersonSearchPage> {
           final formValid = _formKey.currentState?.validate() ?? false;
           if (formValid) {
             await widget.personSearchController.search(
-              aliasContainsBool: _aliasContains,
-              aliasContainsString: _aliasContainsTEC.text,
-              aliasEqualToBool: _aliasEqualTo,
-              aliasEqualToString: _aliasEqualToTEC.text,
-              nameContainsBool: _nameContains,
-              nameContainsString: _nameContainsTEC.text,
-              nameEqualToBool: _nameEqualTo,
-              nameEqualToString: _nameEqualToTEC.text,
-              cpfContainsBool: _cpfContains,
-              cpfContainsString: _cpfContainsTEC.text,
-              cpfEqualToBool: _cpfEqualTo,
-              cpfEqualToString: _cpfEqualToTEC.text,
-              motherContainsBool: _motherContains,
-              motherContainsString: _motherContainsTEC.text,
-              motherEqualToBool: _motherEqualTo,
-              motherEqualToString: _motherEqualToTEC.text,
-              markContainsBool: _markContains,
-              markContainsString: _markContainsTEC.text,
-              markContains2Bool: _markContains2,
-              markContains2String: _markContains2TEC.text,
-              markContains3Bool: _markContains3,
-              markContains3String: _markContains3TEC.text,
-              birthdayBool: _birthday,
-            );
+                aliasContainsBool: _aliasContains,
+                aliasContainsString: _aliasContainsTEC.text,
+                aliasEqualToBool: _aliasEqualTo,
+                aliasEqualToString: _aliasEqualToTEC.text,
+                nameContainsBool: _nameContains,
+                nameContainsString: _nameContainsTEC.text,
+                nameEqualToBool: _nameEqualTo,
+                nameEqualToString: _nameEqualToTEC.text,
+                cpfContainsBool: _cpfContains,
+                cpfContainsString: _cpfContainsTEC.text,
+                cpfEqualToBool: _cpfEqualTo,
+                cpfEqualToString: _cpfEqualToTEC.text,
+                motherContainsBool: _motherContains,
+                motherContainsString: _motherContainsTEC.text,
+                motherEqualToBool: _motherEqualTo,
+                motherEqualToString: _motherEqualToTEC.text,
+                markContainsBool: _markContains,
+                markContainsString: _markContainsTEC.text,
+                markContains2Bool: _markContains2,
+                markContains2String: _markContains2TEC.text,
+                markContains3Bool: _markContains3,
+                markContains3String: _markContains3TEC.text,
+                birthdayBool: _birthday,
+                lawEqualToBool: _lawEqualTo,
+                lawSelected: lawSelected);
             // Get.back();
           }
         },

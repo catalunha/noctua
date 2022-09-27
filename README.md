@@ -66,3 +66,5 @@ https://www.mockaroo.com/
 
 # Operações
 
+https://stackoverflow.com/questions/61111194/passing-objects-in-flutter-through-dropdownmenuitem-in-dropdownlist
+
