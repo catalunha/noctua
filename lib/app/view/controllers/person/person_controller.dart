@@ -47,6 +47,7 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
   final _pagination = Pagination().obs;
   final _lastPage = false.obs;
   get lastPage => _lastPage.value;
+  late final Worker paginationWorker;
 
   var personImageList = <PersonImageModel>[].obs;
   // List<LawModel> lawStatusList = [];
@@ -83,16 +84,25 @@ class PersonController extends GetxController with LoaderMixin, MessageMixin {
     }
   }
 
+// Analisar colocar isto no onReady
+// colocar loading na busca da lista
   @override
   void onInit() async {
     _personList.clear();
-    ever(_pagination, (_) => listAll());
+    paginationWorker = ever(_pagination, (_) => listAll());
     _changePagination(1, 2);
     loaderListener(_loading);
     messageListener(_message);
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    paginationWorker();
+    super.onClose();
+  }
+
+// rever objetos reativos
   void _changePagination(int page, int limit) {
     _pagination.update((val) {
       val!.page = page;
