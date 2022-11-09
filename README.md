@@ -68,3 +68,5 @@ https://www.mockaroo.com/
 
 https://stackoverflow.com/questions/61111194/passing-objects-in-flutter-through-dropdownmenuitem-in-dropdownlist
 
+# image crop
+https://medium.com/@navdeepkumar.iitj/image-cropping-and-compress-in-flutter-5c66858614c3

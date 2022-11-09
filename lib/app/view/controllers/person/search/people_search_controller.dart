@@ -32,7 +32,6 @@ class PersonSearchController extends GetxController
   final _message = Rxn<MessageModel>();
 
   List<PersonModel> personList = <PersonModel>[].obs;
-  // var peopleCount = 0.obs;
   final _pagination = Pagination().obs;
   final _lastPage = false.obs;
   get lastPage => _lastPage.value;
